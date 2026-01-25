@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <div className="font-pretendard pb-15">
+      <div className="font-pretendard pb-20">
         {/* 1. 헤더 */}
         <header className="font-pretendard flex flex-row gap-3.5 mt-4.5 ml-5.5 mb-4.5 items-center justify-between">
           <button
@@ -114,7 +114,7 @@ export default function ProductDetailPage() {
               height={16}
               className="w-4 h-4"
             />
-            <span className="leading-none items-center text-center text-lg">
+            <span className="leading-none items-center text-center text-lg font-medium">
               상품 상세
             </span>
           </button>
