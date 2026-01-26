@@ -1,8 +1,8 @@
-//프로필 수정
+// 프로필 수정
 
 /* 
 임시 확인용 URL - 추후 삭제 예정
-http://localhost:3000/mypage/profile
+http://localhost:3000/mypage/profileedit
 */
 
 'use client';
