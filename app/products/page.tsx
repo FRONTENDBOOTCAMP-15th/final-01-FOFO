@@ -2,7 +2,10 @@ import UnderBar from '@/components/common/Footer';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default function ProductPage() {
+export default async function ProductPage() {
+  // 스플래시 화면이 나오도록 2.5초 지연 걸어둠
+  await new Promise(resolve => setTimeout(resolve, 1000 * 2.5));
+
   const categories = ['전체', '사료', '간식', '용품', '건강', '의류'];
   // 기능 구현때 번경 예정
   const subCategories = ['건식', '습식/화식', '건조', '기타'];

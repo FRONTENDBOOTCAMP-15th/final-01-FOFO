@@ -26,21 +26,25 @@ export default function ProductList() {
           <div className="flex flex-row items-center gap-1">
             <div className="flex flex-row items-center gap-0.5">
               <Image
-                src="/icons/visile.svg"
+                src="/icons/visile-gray.svg"
                 alt="조회 수"
                 width={12}
                 height={12}
               />
-              <span className="text-[12px]">103</span>
+              <span className="text-[12px] text-br-button-disabled-text">
+                103
+              </span>
             </div>
             <div className="flex flex-row items-center gap-0.5">
               <Image
-                src="/icons/heart-line.svg"
+                src="/icons/heart-line-gray.svg"
                 alt="조회 수"
                 width={12}
                 height={12}
               />
-              <span className="text-[12px]">2</span>
+              <span className="text-[12px] text-br-button-disabled-text">
+                2
+              </span>
             </div>
           </div>
         </div>

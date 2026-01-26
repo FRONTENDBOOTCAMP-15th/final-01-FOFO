@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import UnderBar from '@/components/common/Footer';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import Header from '@/components/common/Header';
 
 const hints = [
   '"시니어 강아지가 먹을 간식 뭐야?"',
@@ -14,8 +14,6 @@ const hints = [
 ];
 
 export default function SearchPage() {
-  const router = useRouter();
-
   const [hintIndex, setHintIndex] = useState(0);
 
   useEffect(() => {
@@ -30,18 +28,7 @@ export default function SearchPage() {
       {/* 화면 전체 래퍼 */}
       <div className="font-pretendard min-h-screen pb-15">
         {/* 헤더 */}
-        <header className="px-4 pt-4.5">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            aria-label="뒤로 가기"
-            className="flex items-center gap-3.5"
-          >
-            <Image src="/icons/arrow-left.svg" alt="" width={8} height={16} />
-            <span className="leading-none">AI 검색</span>
-          </button>
-        </header>
-
+        <Header title="AI 검색" />
         {/* 본문 */}
         <main className="px-4">
           <div className="mx-auto w-full max-w-130 flex flex-col items-center text-center">
