@@ -76,7 +76,7 @@ export default function ProductPage() {
 
         {/* 상품 목록 */}
         <section className="grid grid-cols-2 gap-4 pb-20">
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -107,9 +107,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -140,9 +140,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -173,9 +173,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -206,9 +206,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -239,9 +239,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -272,9 +272,9 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
 
-          <article>
+          <Link href={'/products/1'}>
             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
               <Image
                 src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -305,7 +305,7 @@ export default function ProductPage() {
               />
               <span className="text-[#8A8F99] text-[12px]">2</span>
             </div>
-          </article>
+          </Link>
         </section>
       </div>
 
