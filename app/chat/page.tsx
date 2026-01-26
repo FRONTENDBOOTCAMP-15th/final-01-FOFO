@@ -52,10 +52,12 @@ export default function ChatPage() {
           </div>
           <div className="ml-5">
             <p className="text-[15px]">소사동불주먹</p>
-            <p className="text-[12px] text-[#959595]">
+            <p className="text-[12px] text-br-input-active-line">
               지금 근처에 있어요! 혹시 아직 도착 안 하...
             </p>
-            <span className="text-[9px] text-[#959595]">오후 3:30</span>
+            <span className="text-[9px] text-br-input-active-line">
+              오후 3:30
+            </span>
           </div>
           <Image
             src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -80,8 +82,12 @@ export default function ChatPage() {
           </div>
           <div className="ml-5">
             <p className="text-[15px]">인천주디</p>
-            <p className="text-[12px] text-[#959595]">물건 다 팔렸나요ㅠㅠ?</p>
-            <span className="text-[9px] text-[#959595]">오후 3:30</span>
+            <p className="text-[12px] text-br-input-active-line">
+              물건 다 팔렸나요ㅠㅠ?
+            </p>
+            <span className="text-[9px] text-br-input-active-line">
+              오후 3:30
+            </span>
           </div>
           <Image
             src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"
@@ -106,8 +112,10 @@ export default function ChatPage() {
           </div>
           <div className="ml-5">
             <p className="text-[15px]">서울역왕발</p>
-            <p className="text-[12px] text-[#959595]">안녕하세요~</p>
-            <span className="text-[9px] text-[#959595]">오후 3:30</span>
+            <p className="text-[12px] text-br-input-active-line">안녕하세요~</p>
+            <span className="text-[9px] text-br-input-active-line">
+              오후 3:30
+            </span>
           </div>
           <Image
             src="https://res.cloudinary.com/ddedslqvv/image/upload/v1768981576/febc15-final01-ecad/qBJjByQxs.png"

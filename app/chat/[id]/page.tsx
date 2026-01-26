@@ -50,12 +50,16 @@ export default function ChatPage() {
         </div>
       </header>
       <section className="pt-40 px-4 flex flex-col">
-        <p className="text-xs text-[#959595] text-center">2026.01.29 목요일</p>
+        <p className="text-xs text-br-input-active-line text-center">
+          2026.01.29 목요일
+        </p>
         {/* 본인 */}
         <div className="flex ml-auto items-end gap-1.5 ">
           <div className="flex flex-col">
-            <span className="text-xs text-[#959595] ml-auto">읽음</span>
-            <span className="text-xs text-[#959595]">오후 3:30</span>
+            <span className="text-xs text-br-input-active-line ml-auto">
+              읽음
+            </span>
+            <span className="text-xs text-br-input-active-line">오후 3:30</span>
           </div>
           <p className="min-w-25.25 max-w-53.25 w-fit bg-br-primary-500 px-3.5 py-2.5 text-[14px] text-[#ffffff] rounded-[10px] ">
             안녕하세요~!
@@ -74,13 +78,17 @@ export default function ChatPage() {
             안녕하세요~! <br />
             강아지 옷 사실건가요?
           </p>
-          <span className="text-xs text-[#959595] self-end">오후 3:30</span>
+          <span className="text-xs text-br-input-active-line self-end">
+            오후 3:30
+          </span>
         </div>
         {/* 본인 */}
         <div className="flex ml-auto items-end gap-1.5 ">
           <div className="flex flex-col">
-            <span className="text-xs text-[#959595] ml-auto">읽음</span>
-            <span className="text-xs text-[#959595]">오후 3:30</span>
+            <span className="text-xs text-br-input-active-line ml-auto">
+              읽음
+            </span>
+            <span className="text-xs text-br-input-active-line">오후 3:30</span>
           </div>
           <p className="min-w-25.25 max-w-54 w-fit bg-br-primary-500 px-3.5 py-2.5 text-[14px] text-[#ffffff] rounded-[10px] ">
             직거래 가능할까요? 이번주에 시간 다 괜찮아요~~~~!
@@ -89,19 +97,21 @@ export default function ChatPage() {
       </section>
       <footer className="bg-white fixed bottom-0 left-0 right-0 font-pretendard flex justify-between items-center w-full h-16 shadow-[0_-6px_12px_-8px_rgba(0,0,0,0.12)] px-5.75 ">
         <div className="flex gap-2.5 w-full items-center">
-          <button
-            type="button"
-            aria-label="첨부하기"
-            onClick={() => {}}
-            className="w-7 h-7"
-          >
-            <Image src="/icons/add.svg" alt="" width={28} height={28} />
-          </button>
+          <input
+            type="file"
+            id="file-upload"
+            // onChange={handleFileChange}
+            className="hidden"
+            accept="image/*"
+          />
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <Image src="/icons/add.svg" alt="첨부하기" width={28} height={28} />
+          </label>
 
           <textarea
             placeholder="채팅창을 입력하세요."
             rows={1}
-            className="w-full h-11.5 px-6.25 py-2.5 text-[17px] rounded-4xl resize-none bg-[#F4F5FA] overflow-hidden"
+            className="w-full h-11.5 px-6.25 py-2.5 text-[17px] rounded-4xl resize-none bg-[#F4F5FA] overflow-hidden text-br-input-active-line"
           ></textarea>
           <button
             type="button"
