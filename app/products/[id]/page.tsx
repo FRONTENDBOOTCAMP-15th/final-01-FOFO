@@ -3,11 +3,14 @@
 import { useState } from 'react'; // ← 이것만 추가!
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function ProductDetailPage() {
   const goBack = useRouter();
   // 탭 상태 관리
   const [activeTab, setActiveTab] = useState('product');
+  // 찜 상태 관리
+  const [isWished, setIsWished] = useState(false);
   // 게시물 있을 때 버전 (***테스트용)
   const sellerData = {
     intro:
@@ -86,7 +89,6 @@ export default function ProductDetailPage() {
       },
     ],
   };
-
   // 게시물 없을 때 버전 (***테스트용)
   // const sellerData = {
   //   intro: '', // 빈 문자열
@@ -211,14 +213,14 @@ export default function ProductDetailPage() {
                   5,000원
                 </p>
 
-                <article className="font-light break-all">
+                <article className="font-light break-all mb-2">
                   <p>고양이들 좋아 죽는 쥐 인형 팝니다 !</p>
                   <p>장난감으로 딱이에요</p>
                   <p>여러 개 샀는데 우리 고양이는 안 가지고 노네요 .....</p>
                 </article>
 
                 {/* 조회수/찜 수*/}
-                <div className="flex items-center gap-4 text-sm text-br-input-disabled-text mb-6 justify-end">
+                <div className="flex items-center gap-3 text-sm text-br-input-disabled-text mb-6 justify-end">
                   {/* 조회수 */}
                   <div className="flex items-center gap-1">
                     <img
@@ -314,7 +316,7 @@ export default function ProductDetailPage() {
                     <div className="flex-1 text-center py-4">
                       <div className="flex items-center justify-center gap-1 mb-0">
                         <span className="text-lg text-br-text-body">
-                          {sellerData.activityScore}
+                          {sellerData.activityScore.toFixed(1)}
                         </span>
                         <img
                           src="/icons/footer-mypage-fill.svg"
@@ -420,8 +422,9 @@ export default function ProductDetailPage() {
                   {sellerData.otherProducts.length > 0 ? (
                     <div className="flex gap-2 overflow-x-auto">
                       {sellerData.otherProducts.map(product => (
-                        <div
+                        <Link
                           key={product.id}
+                          href={`/products/${product.id}`}
                           className="
                           min-w-30
                           shrink-0
@@ -429,10 +432,12 @@ export default function ProductDetailPage() {
                           overflow-hidden
                         "
                         >
-                          <img
+                          <Image
                             src={product.image}
                             alt={product.name}
-                            className="w-full h-30  rounded-lg"
+                            width={120}
+                            height={120}
+                            className="w-full h-30 rounded-lg"
                           />
                           <div className="mt-2 mb-1">
                             <p className="font-semibold text-br-text-body">
@@ -442,7 +447,7 @@ export default function ProductDetailPage() {
                               {product.name}
                             </p>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   ) : (
@@ -456,19 +461,27 @@ export default function ProductDetailPage() {
           </div>
           {/* 찜하기 & 채팅하기 */}
           <div className="fixed bottom-0 left-0 right-0 flex gap-2 px-4 py-3 bg-white border-t border-br-input-disabled-line">
-            <button className="flex flex-col items-center justify-center w-16 py-2">
+            <button
+              className="flex flex-col items-center justify-center w-16 py-2"
+              onClick={() => setIsWished(!isWished)}
+            >
               <Image
-                src="/icons/heart-line.svg"
-                alt=""
+                src={
+                  isWished ? '/icons/heart-fill.svg' : '/icons/heart-line.svg'
+                }
+                alt="찜하기"
                 width={24}
                 height={24}
               />
               <span className="text-[9px] text-br-text-body mt-1">찜하기</span>
             </button>
 
-            <button className="flex-1 py-3 font-light bg-br-button-active-bg text-br-button-active-text rounded-xl">
+            <Link
+              href={'/chat/id'}
+              className="flex-1 py-4 font-light bg-br-button-active-bg text-br-button-active-text rounded-xl text-center"
+            >
               채팅 하기
-            </button>
+            </Link>
           </div>
         </div>
       </div>
