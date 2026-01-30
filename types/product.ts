@@ -27,7 +27,6 @@ export interface Product {
     embeddings?: number[];
   };
   seller: User;
-  replies: [];
   rating: number;
 }
 
@@ -77,6 +76,7 @@ export interface SellerProduct {
 // 상품 정보
 export type ProductDetail = Product & {
   content: string;
+  replies: UserReview[];
 };
 
 // 찜하기 요청
@@ -103,16 +103,14 @@ export type SellerProductList = Pick<
 
 //판매자 후기
 export interface UserReview {
-  replies: {
+  _id: number;
+  user: {
     _id: number;
-    user: {
-      _id: number;
-      name: string;
-      image: string;
-    };
-    rating: number;
-    content: string;
-  }[];
+    name: string;
+    image: string;
+  };
+  rating: number;
+  content: string;
 }
 
 // 구매 후기 등록
