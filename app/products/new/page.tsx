@@ -92,7 +92,7 @@ export default function MyFofoPage() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center bg-blue-200">
+    <div className="min-h-screen flex justify-center">
       <div className="relative w-full max-w-md md:max-w-lg lg:max-w-2xl xl:max-w-full  px-4 bg-white">
         {/* 뒤로 가기 섹션 */}
         {/* TODO 컴포넌트 크기 좀 작은 것 같음 */}
