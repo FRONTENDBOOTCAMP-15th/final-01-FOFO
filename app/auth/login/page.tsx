@@ -2,7 +2,7 @@
 
 /* 
 임시 확인용 URL - 추후 삭제 예정
-http://localhost:3000/login
+http://localhost:3000/auth/login
 */
 
 'use client';
@@ -33,24 +33,26 @@ export default function LoginPage() {
   const togglePassword = () => setShowPassword(!showPassword);
 
   return (
-    <div className="min-h-screen flex justify-center bg-blue-200">
-      <div className="relative w-full max-w-md px-11.5 bg-white">
+    <div className="min-h-screen flex justify-center ">
+      <div className="relative w-full px-11.5 bg-white">
         {/* 뒤로 가기 섹션 */}
-        <button
-          type="button"
-          onClick={() => goBack.back()}
-          aria-label="뒤로 가기 "
-          className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
-        >
-          <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
-          <span className="text-[18px] leading-none font-medium">로그인</span>
-        </button>
+        <Link href={'/auth'}>
+          <button
+            type="button"
+            onClick={() => goBack.back()}
+            aria-label="뒤로 가기 "
+            className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
+          >
+            <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
+            <span className="text-[18px] leading-none font-medium">로그인</span>
+          </button>
+        </Link>
 
         {/* 로고 섹션 */}
         <div className="mt-42.5">
           <h1>
             <Image
-              src="/icon/logo.svg"
+              src="/icons/logo-blue.svg"
               alt="FOFO 로고"
               width={94}
               height={24}
@@ -138,7 +140,7 @@ export default function LoginPage() {
           {/* 로그인 - 로그인(버튼) */}
           {/* TODO: 로그인 href 제대로 넘어가는지 확인 */}
           <Link
-            href="/login"
+            href="/products"
             className="relative flex items-center justify-center mt-7.5 w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium"
           >
             <span className="text-white">로그인</span>

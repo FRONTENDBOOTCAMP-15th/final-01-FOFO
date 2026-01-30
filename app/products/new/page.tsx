@@ -12,6 +12,7 @@ import Image from 'next/image';
 import ArrowIcon from '@/public/icons/arrow-left.svg';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function MyFofoPage() {
   const goBack = useRouter();
@@ -28,17 +29,19 @@ export default function MyFofoPage() {
         {/* 뒤로 가기 섹션 */}
         {/* TODO 컴포넌트 크기 좀 작은 것 같음 */}
         {/* <Header title="상품 등록" /> */}
-        <button
-          type="button"
-          onClick={() => goBack.back()}
-          aria-label="뒤로 가기"
-          className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
-        >
-          <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
-          <span className="text-[18px] leading-none font-medium">
-            상품 등록
-          </span>
-        </button>
+        <Link href={'/products'}>
+          <button
+            type="button"
+            onClick={() => goBack.back()}
+            aria-label="뒤로 가기"
+            className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
+          >
+            <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
+            <span className="text-[18px] leading-none font-medium">
+              상품 등록
+            </span>
+          </button>
+        </Link>
 
         {/* 사진 섹션 */}
         <div className="flex flex-col mt-27.5">
@@ -295,12 +298,14 @@ export default function MyFofoPage() {
 
           {/* 변경 버튼 */}
           <div className="mb-5 pb-safe">
-            <button
-              type="submit"
-              className="relative flex items-center justify-center mt-10  w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium cursor-pointer"
-            >
-              상품 등록
-            </button>
+            <Link href="/products">
+              <button
+                type="submit"
+                className="relative flex items-center justify-center mt-10  w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium cursor-pointer"
+              >
+                상품 등록
+              </button>
+            </Link>
           </div>
         </form>
       </div>

@@ -39,18 +39,22 @@ export default function SignupPage() {
   /*   const [isOpen, setIsOpen] = useState(false); */
 
   return (
-    <div className="min-h-screen flex justify-center bg-blue-200">
-      <div className="relative w-full max-w-md px-4 bg-white">
+    <div className="min-h-screen flex justify-center">
+      <div className="relative w-full px-4 bg-white">
         {/* 뒤로 가기 섹션 */}
-        <button
-          type="button"
-          onClick={() => goBack.back()}
-          aria-label="뒤로 가기 "
-          className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
-        >
-          <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
-          <span className="text-[18px] leading-none font-medium">회원가입</span>
-        </button>
+        <Link href={'/auth/login'}>
+          <button
+            type="button"
+            onClick={() => goBack.back()}
+            aria-label="뒤로 가기 "
+            className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
+          >
+            <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
+            <span className="text-[18px] leading-none font-medium">
+              회원가입
+            </span>
+          </button>
+        </Link>
 
         <form className="flex flex-col gap-4 mt-27.5">
           {/* 회원가입(필수 정보) 폼 섹션 */}
@@ -360,7 +364,7 @@ export default function SignupPage() {
 
           {/* 회원가입 - 회원가입(버튼) */}
           <Link
-            href="/login"
+            href="/auth/login"
             className="relative flex items-center justify-center mt-10 mb-5 pb-safe w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium"
           >
             <span className="text-white">회원가입</span>

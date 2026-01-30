@@ -1,10 +1,5 @@
 // 반려동물 프로필 수정
 
-/* 
-임시 확인용 URL - 추후 삭제 예정
-http://localhost:3000/mypage/petedit
-*/
-
 'use client';
 
 import Image from 'next/image';
@@ -13,6 +8,7 @@ import CheckIcon from '@/public/icons/Frame.svg';
 import ArrowBottomIcon from '@/public/icons/arrow-bottom.svg';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function MyFofoPage() {
   const goBack = useRouter();
@@ -34,20 +30,22 @@ export default function MyFofoPage() {
   const [petAge, setPetAge] = useState('');
 
   return (
-    <div className="min-h-screen flex justify-center bg-blue-200">
-      <div className="relative w-full max-w-md px-4 bg-white">
+    <div className="min-h-screen flex justify-center">
+      <div className="relative w-full px-4 bg-white">
         {/* 뒤로 가기 섹션 */}
-        <button
-          type="button"
-          onClick={() => goBack.back()}
-          aria-label="뒤로 가기"
-          className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
-        >
-          <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
-          <span className="text-[18px] leading-none font-medium">
-            나의 포포
-          </span>
-        </button>
+        <Link href={'/mypage'}>
+          <button
+            type="button"
+            onClick={() => goBack.back()}
+            aria-label="뒤로 가기"
+            className="absolute left-4 top-14 flex items-center flex-row gap-1.75 cursor-pointer"
+          >
+            <Image src={ArrowIcon} alt="뒤로 가기 아이콘" />
+            <span className="text-[18px] leading-none font-medium">
+              나의 포포
+            </span>
+          </button>
+        </Link>
 
         <form className="flex flex-col gap-4 mt-27.5">
           {/* 프로필 수정 */}
@@ -200,12 +198,14 @@ export default function MyFofoPage() {
           {/* 변경 버튼) */}
           {/* TODO  */}
           <div className="mb-5 pb-safe">
-            <button
-              type="submit"
-              className="relative flex items-center justify-center mt-10  w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium"
-            >
-              정보 변경
-            </button>
+            <Link href="/mypage">
+              <button
+                type="submit"
+                className="relative flex items-center justify-center mt-10  w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium"
+              >
+                정보 변경
+              </button>
+            </Link>
           </div>
         </form>
       </div>
