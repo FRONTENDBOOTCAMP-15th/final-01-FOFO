@@ -24,17 +24,19 @@ export interface Product {
     condition: 'new' | 'used'; // 새상품/중고
     tradeType: 'delivery' | 'direct' | 'both'; //택배/직거래/둘다
     tradeLocation?: string;
+    embeddings?: number[];
   };
   seller: User;
-  replies: [];
   rating: number;
 }
 
 // 검색 결과용 Product
 export type ProductSearchList = Pick<
   Product,
-  'name' | 'price' | 'mainImages' | 'bookmarks'
->;
+  '_id' | 'name' | 'price' | 'mainImages' | 'bookmarks'
+> & {
+  similarity: number; // 유사도
+};
 
 // 검색 결과 응답 타입 -> 얘만 따로
 export interface ProductSearchListRes {
@@ -74,6 +76,7 @@ export interface SellerProduct {
 // 상품 정보
 export type ProductDetail = Product & {
   content: string;
+  replies: UserReview[];
 };
 
 // 찜하기 요청
@@ -100,16 +103,14 @@ export type SellerProductList = Pick<
 
 //판매자 후기
 export interface UserReview {
-  replies: {
+  _id: number;
+  user: {
     _id: number;
-    user: {
-      _id: number;
-      name: string;
-      image: string;
-    };
-    rating: number;
-    content: string;
-  }[];
+    name: string;
+    image: string;
+  };
+  rating: number;
+  content: string;
 }
 
 // 구매 후기 등록
