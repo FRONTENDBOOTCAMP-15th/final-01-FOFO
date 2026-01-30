@@ -7,14 +7,14 @@ import SignupIcon from '@/public/icons/join.svg';
 
 export default function AuthPage() {
   return (
-    <div className="min-h-screen flex justify-center bg-blue-200">
-      <div className="w-full max-w-md px-11.5 bg-white">
+    <div className="min-h-screen flex justify-center">
+      <div className="w-full px-11.5">
         {/* 로고 섹션 */}
         {/* TODO: 로고 svg 추가 - icon폴더에 넣나? */}
         <div className="mt-42.5">
           <h1>
             <Image
-              src="/icon/logo.svg"
+              src="/icons/logo-blue.svg"
               alt="FOFO 로고"
               width={94}
               height={24}
@@ -34,7 +34,7 @@ export default function AuthPage() {
         {/* TODO: 먼저 둘러보기 href 제대로 넘어가는지 확인 */}
         <div className="flex flex-col gap-2 mt-25">
           <Link
-            href="/login"
+            href="/auth/login"
             className="relative flex items-center justify-center w-full h-14 rounded-lg bg-[#60CFFF] text-white font-medium"
           >
             <Image
@@ -45,7 +45,7 @@ export default function AuthPage() {
             <span className="text-white">이메일로 로그인</span>
           </Link>
           <Link
-            href="/signup"
+            href="/auth/signup"
             className="relative flex items-center justify-center w-full h-14 rounded-lg border border-[#60CFFF] text-[#60CFFF] font-medium"
           >
             <Image
