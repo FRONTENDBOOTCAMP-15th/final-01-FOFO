@@ -57,7 +57,7 @@ export default function PurchasesProductList() {
       </Link>
       {/* 발자국 등록 버튼 */}
       <Link
-        href="/review"
+        href="/"
         className="absolute bottom-1 right-0 flex items-center justify-center font-pretendard px-3 py-2 w-23 h-8 text-sm bg-br-chip-active-bg text-br-chip-active-text rounded-xl z-10"
       >
         발자국 등록
