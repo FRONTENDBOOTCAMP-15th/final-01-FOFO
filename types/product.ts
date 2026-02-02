@@ -112,6 +112,7 @@ export interface UserReview {
   };
   rating: number;
   content: string;
+  createdAt: string;
 }
 
 // 구매 후기 등록
