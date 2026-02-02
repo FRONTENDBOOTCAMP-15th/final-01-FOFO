@@ -26,7 +26,7 @@ export default function ProductCard({
         />
       </div>
       <p className="mt-2 font-semibold">{price.toLocaleString()}원</p>
-      <p className="mt-1.5 text-br-input-active-line">{name}</p>
+      <p className="mt-1.5 text-br-input-active-line truncate">{name}</p>
       <div className="flex gap-0.5 mt-2">
         <Image src="/icons/visile-gray.svg" alt="" width={12} height={8} />
         <span className="text-br-input-active-line text-[12px]">
