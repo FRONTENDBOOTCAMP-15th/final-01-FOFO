@@ -3,7 +3,7 @@
 
 import UnderBar from '@/components/common/Footer';
 import Header from '@/components/common/Header';
-import ProductList from '@/components/search/ProductList';
+import SearchResultProduct from '@/components/search/SearchResultProduct';
 import { useSearchStore } from '@/store/searchStore';
 import { ProductSearchList } from '@/types/product';
 
@@ -88,7 +88,7 @@ export default function SearchResultPage() {
         <main className="px-4 mt-7.25">
           <p className="text-[18px]">AI 추천 상품</p>
           {proudcts.map(product => {
-            return <ProductList key={product._id} product={product} />;
+            return <SearchResultProduct key={product._id} product={product} />;
           })}
           <button
             type="button"
