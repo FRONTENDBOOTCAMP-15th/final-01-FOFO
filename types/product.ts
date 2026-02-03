@@ -31,7 +31,7 @@ export interface Product {
 }
 
 // 임베딩 된 상품 목록 조회
-export type EmbeddingProducts = Array<Pick<Product, '_id' | 'extra'>>;
+export type EmbeddingProducts = Array<Pick<Product, '_id' | 'extra' | 'name'>>;
 
 // 검색 결과용 Product
 export type ProductSearchList = Pick<
