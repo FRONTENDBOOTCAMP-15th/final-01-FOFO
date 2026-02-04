@@ -16,9 +16,11 @@ export default function SearchResultProductList({
   return (
     <main className="px-4 mt-7.25">
       <p className="text-[18px]">AI 추천 상품</p>
-      {products.map(product => {
-        return <SearchResultProduct key={product._id} product={product} />;
-      })}
+      <div>
+        {products.map(product => {
+          return <SearchResultProduct key={product._id} product={product} />;
+        })}
+      </div>
       {/* 안내 문구 + 버튼 */}
       <div className="mt-10 mb-13 flex flex-col items-center">
         <p className="text-br-button-disabled-text text-[14px] text-center mb-3">
