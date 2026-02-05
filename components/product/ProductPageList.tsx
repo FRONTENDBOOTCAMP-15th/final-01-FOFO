@@ -4,9 +4,13 @@
 import { usePetStore } from '@/store/petStore';
 import { categories } from '@/categories/categories';
 import ProductCard from './ProductCard';
-import { Product } from '@/types/product';
+import { ProductWithoutEmbeddings } from '@/types/product';
 
-export default function ProductPageList({ products }: { products: Product[] }) {
+export default function ProductPageList({
+  products,
+}: {
+  products: ProductWithoutEmbeddings[];
+}) {
   const { pet, selectedCategory, selectedSub, searchKeyword } = usePetStore();
 
   let petCategories;

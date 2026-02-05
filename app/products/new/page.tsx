@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'next/navigation'; // 라우터 훅(페이지 이동)
 import { registProduct } from '@/lib/api/new'; // 상품 등록 API 함수
 import { SellerProduct } from '@/types/product'; // 상품 타입
+import { embedSingleProduct } from '@/actions/ai-search/generate-embeddings';
 import useUserStore from '@/store/authStore';
 
 export default function MyFofoPage() {
@@ -134,7 +135,14 @@ export default function MyFofoPage() {
       // const result = await registProduct(productData);
       const result = await registProduct(productData, accessToken);
 
-      if (result.ok === 1) {
+      if (result.ok) {
+        // 등록된 상품의 id
+        const productId = result.item._id;
+
+        // 등록될 때 등록되는 상품 임베딩 작업
+        embedSingleProduct(productId).catch(err => {
+          console.error('단일 상품 임베딩 실패:', err);
+        });
         alert('상품이 성공적으로 등록되었습니다! 🎉');
         router.push('/products');
       } else {

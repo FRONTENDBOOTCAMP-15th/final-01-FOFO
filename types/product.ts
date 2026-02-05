@@ -57,6 +57,11 @@ export type ProductList = Pick<
   '_id' | 'price' | 'name' | 'mainImages' | 'bookmarks' | 'views'
 >;
 
+// 상품 목록 페이지(embedding 제외한 타입)
+export type ProductWithoutEmbeddings = Omit<Product, 'extra'> & {
+  extra: Omit<Product['extra'], 'embeddings'>;
+};
+
 //상품 등록 페이지
 export interface SellerProduct {
   price: number;

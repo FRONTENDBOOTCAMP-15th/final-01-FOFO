@@ -174,3 +174,45 @@ export async function AllProductEmbeddings() {
     throw error;
   }
 }
+
+// 상품 등록 시 임베딩 되도록 하는 단일 상품 임베딩 함수
+export async function embedSingleProduct(productId: number) {
+  try {
+    // 1. 상품 상세 조회 api
+    const detailRes = await getProductDetail(productId.toString());
+    if (!detailRes.ok) {
+      throw new Error(detailRes.message);
+    }
+
+    const productDetail: ProductDetail = detailRes.item;
+
+    // 2. 상품 임베딩용 텍스트 생성(카테고리 필터링)
+    const embeddingText = createEmbeddingText(productDetail);
+
+    // 3. 상품 임베딩 작업
+    const embedding = await getEmbedding(embeddingText);
+
+    const extra = productDetail.extra;
+    extra.embeddings = embedding;
+    const body = {
+      extra,
+    };
+
+    const editRes = await fetch(`${API_URL}/seller/products/${productId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Id': CLIENT_ID!,
+        Authorization: `Bearer ${ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!editRes.ok) {
+      const errText = await editRes.text();
+      throw new Error(`수정 실패: ${editRes.status} ${errText}`);
+    }
+  } catch (error) {
+    console.error('단일 상품 임베딩 실패:', error);
+  }
+}
