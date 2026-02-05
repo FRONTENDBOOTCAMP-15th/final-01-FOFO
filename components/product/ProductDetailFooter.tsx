@@ -1,26 +1,40 @@
 import { addBookmark, deleteBookmark } from '@/lib/api/bookmarks';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // 상품 상세 페이지 푸터
 export default function ProductDetailFooter({
   productId,
+  initialIsWished = false,
+  initialBookmarkId = null,
 }: {
   productId: number;
+  initialIsWished?: boolean;
+  initialBookmarkId?: number | null;
 }) {
-  const [isWished, setIsWished] = useState(false);
+  const [isWished, setIsWished] = useState(initialIsWished);
+  const [bookmarkId, setBookmarkId] = useState<number | null>(
+    initialBookmarkId
+  );
+  useEffect(() => {
+    setIsWished(initialIsWished);
+    setBookmarkId(initialBookmarkId);
+  }, [initialIsWished, initialBookmarkId]);
+
   const wishClick = async () => {
     try {
-      if (isWished) {
-        const result = await deleteBookmark(productId);
+      if (isWished && bookmarkId) {
+        const result = await deleteBookmark(bookmarkId);
         if (result.ok === 1) {
           setIsWished(false);
+          setBookmarkId(null);
         }
       } else {
         const result = await addBookmark(productId);
         if (result.ok === 1) {
           setIsWished(true);
+          setBookmarkId(result.item._id);
         }
       }
     } catch (error) {

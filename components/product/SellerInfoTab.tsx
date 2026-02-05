@@ -187,7 +187,9 @@ export default function SellerInfoTab({
                         "
                 >
                   <Image
-                    src={product.mainImages[0].path}
+                    src={
+                      product.mainImages?.[0]?.path || '/images/no-image.png'
+                    }
                     alt={product.name}
                     width={120}
                     height={120}

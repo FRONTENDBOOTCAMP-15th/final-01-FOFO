@@ -30,9 +30,15 @@ export async function getProductDetail(
   id: string
 ): Promise<ApiResponse<ProductDetail>> {
   try {
+    const token =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('accessToken')
+        : null; // ✅ 토큰 가져오기 (서버에서는 null)
+
     const res = await fetch(`${API_URL}/products/${id}`, {
       headers: {
         'Client-Id': CLIENT_ID,
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
     });
     return res.json();
@@ -46,7 +52,8 @@ export async function getProductDetail(
   }
 }
 
-//판매자 상품 목록
+//상품 상세 페이지 - 판매자 상품 목록
+//마이페이지 - 판매 내역
 export async function getSellerProductList(
   sellerId: number
 ): Promise<ApiListResponse<SellerProductList>> {
@@ -67,5 +74,3 @@ export async function getSellerProductList(
     };
   }
 }
-
-//상품 관련 api 호출은 아래에 적어주세요!!

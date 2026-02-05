@@ -83,6 +83,7 @@ export interface SellerProduct {
 export type ProductDetail = Product & {
   content: string;
   replies: UserReview[];
+  myBookmarkId?: number;
 };
 
 // 찜하기 요청
@@ -141,10 +142,12 @@ export interface ProductTargetBookmark extends BookmarkResponse {
 }
 
 //공통부분 (찜목록 불러오기)
-export type BookmarkListRes = {
-  ok: 1;
-  item: ProductTargetBookmark[];
-};
+export type BookmarkListRes =
+  | {
+      ok: 1;
+      item: ProductTargetBookmark[];
+    }
+  | ApiError;
 
 // 찜 추가 응답
 export type BookmarkCreateRes =
@@ -162,7 +165,6 @@ export type BookmarkDeleteRes =
   | ApiError;
 
 // 구매 내역
-
 export interface PurchaseList {
   _id: number;
   user_id: number;

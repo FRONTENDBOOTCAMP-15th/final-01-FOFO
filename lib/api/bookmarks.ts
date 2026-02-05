@@ -1,4 +1,8 @@
-import { BookmarkCreateRes, BookmarkDeleteRes } from '@/types/product';
+import {
+  BookmarkCreateRes,
+  BookmarkDeleteRes,
+  BookmarkListRes,
+} from '@/types/product';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
@@ -7,12 +11,15 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 export async function addBookmark(
   productId: number
 ): Promise<BookmarkCreateRes> {
+  const token = localStorage.getItem('accessToken');
+
   try {
     const res = await fetch(`${API_URL}/bookmarks/product`, {
       method: 'POST',
       headers: {
         'Client-Id': CLIENT_ID,
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify({
         target_id: productId,
@@ -32,18 +39,17 @@ export async function addBookmark(
 
 // 찜 삭제
 export async function deleteBookmark(
-  productId: number
+  bookmarkId: number
 ): Promise<BookmarkDeleteRes> {
+  const token = localStorage.getItem('accessToken');
+
   try {
-    const res = await fetch(`${API_URL}/bookmarks/product`, {
+    const res = await fetch(`${API_URL}/bookmarks/${bookmarkId}`, {
       method: 'DELETE',
       headers: {
         'Client-Id': CLIENT_ID,
-        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
-      body: JSON.stringify({
-        target_id: productId,
-      }),
     });
     return res.json();
   } catch (error) {
@@ -53,6 +59,27 @@ export async function deleteBookmark(
       ok: 0,
       message:
         '요청하신 작업 처리에 실패했습니다. 잠시 후 다시 이용해 주시기 바랍니다.',
+    };
+  }
+}
+
+// 찜 목록
+export async function getBookmarks(): Promise<BookmarkListRes> {
+  try {
+    const token = localStorage.getItem('accessToken');
+    const res = await fetch(`${API_URL}/bookmarks/product`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    });
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return {
+      ok: 0,
+      message: '요청하신 작업 처리에 실패했습니다.',
     };
   }
 }

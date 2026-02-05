@@ -1,22 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '@/components/common/Header';
 import SellerProfileBar from '@/components/product/SellerProfileBar';
 import ProductInfoTab from '@/components/product/ProductInfoTab';
 import SellerInfoTab from '@/components/product/SellerInfoTab';
-import {
-  Product,
-  ProductDetail,
-  SellerProductList,
-  UserReview,
-} from '@/types/product';
+import { ProductDetail, SellerProductList, UserReview } from '@/types/product';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import ProductDetailFooter from '@/components/product/ProductDetailFooter';
-import ProductDetailCategory from '@/components/product/ProductDetailCategory';
+import { addRecentProduct } from '@/lib/utils/storage';
+import { getBookmarks } from '@/lib/api/bookmarks';
 
 // 상품 상세 페이지 - 클라이언트 컴포넌트
 export default function ProductDetailClient({
@@ -29,6 +25,45 @@ export default function ProductDetailClient({
   review: UserReview[];
 }) {
   const [activeTab, setActiveTab] = useState('productInfo');
+  const [isWished, setIsWished] = useState(false);
+  const [bookmarkId, setBookmarkId] = useState<number | null>(null);
+
+  // 최근 본 상품 저장
+  useEffect(() => {
+    if (detail) {
+      addRecentProduct({
+        _id: detail._id,
+        name: detail.name,
+        price: detail.price,
+        mainImages: detail.mainImages,
+        seller: detail.seller,
+        bookmarks: detail.bookmarks,
+      });
+    }
+  }, [detail._id]);
+
+  // 찜 상태 확인
+  useEffect(() => {
+    const checkWishStatus = async () => {
+      const bookmarkData = await getBookmarks();
+      if (bookmarkData.ok === 1) {
+        let myBookmark = null;
+        for (let i = 0; i < bookmarkData.item.length; i++) {
+          const eachBookmark = bookmarkData.item[i];
+          if (eachBookmark.product._id === detail._id) {
+            myBookmark = eachBookmark;
+            break;
+          }
+        }
+        if (myBookmark) {
+          setIsWished(true);
+          setBookmarkId(myBookmark._id);
+        }
+      }
+    };
+
+    checkWishStatus();
+  }, [detail._id]);
 
   return (
     <div className="font-pretendard pb-20">
@@ -101,7 +136,11 @@ export default function ProductDetailClient({
           />
         )}
         {/* 푸터 */}
-        <ProductDetailFooter productId={detail._id} />
+        <ProductDetailFooter
+          productId={detail._id}
+          initialIsWished={isWished}
+          initialBookmarkId={bookmarkId}
+        />
       </div>
     </div>
   );
