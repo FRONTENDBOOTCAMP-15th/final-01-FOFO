@@ -4,11 +4,9 @@ import { Product, SellerProduct } from '@/types/product';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
-// 상품 등록 함수
 export async function registProduct(
-  formData: SellerProduct
-  // accessToken: string
-  // accessToken: string = '' // 임시로 빈 문자열 할당
+  formData: SellerProduct,
+  accessToken: string
 ): Promise<ApiResponse<Product>> {
   try {
     const res = await fetch(`${API_URL}/seller/products/`, {
@@ -16,13 +14,12 @@ export async function registProduct(
       headers: {
         'Client-Id': CLIENT_ID,
         'Content-Type': 'application/json',
-        // 임시로 토큰 직접 삽입
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOjIsInR5cGUiOiJzZWxsZXIiLCJpYXQiOjE3NzAwNzg2OTksImV4cCI6MTc3MDE2NTA5OSwiaXNzIjoiRkVCQyJ9.rPfd9dreyKAJEE_Xk3yXmCR83n1o91pbCDlMimJ-MHg`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(formData),
     });
 
-    return res.json();
+    return await res.json();
   } catch (error) {
     console.error(error);
     return {
