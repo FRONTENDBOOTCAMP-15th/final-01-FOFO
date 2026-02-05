@@ -1,6 +1,6 @@
 'use client';
 
-import NotificationBadge from '@/components/chat/NotificationBadge';
+import NotificationBadge from '@/app/chat/_components/NotificationBadge';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,11 +32,10 @@ export default function UnderBar() {
             height={22}
           />
           <span
-            className={`text-[11px] leading-none ${
-              isActive('/products')
-                ? 'text-br-primary-500'
-                : 'text-br-button-disabled-text'
-            }`}
+            className={`text-[11px] leading-none ${isActive('/products')
+              ? 'text-br-primary-500'
+              : 'text-br-button-disabled-text'
+              }`}
           >
             홈
           </span>

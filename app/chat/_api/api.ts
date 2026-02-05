@@ -1,4 +1,5 @@
-import { ErrorRes, ServerValidationError } from '@/types/common.ts';
+import { ErrorRes, ServerValidationError } from "@/app/chat/_types/api";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';

@@ -2,7 +2,8 @@
 
 'use client';
 
-import ChatList from '@/components/chat/ChatList';
+
+import ChatList from '@/app/chat/ChatList';
 import UnderBar from '@/components/common/Footer';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -26,20 +27,18 @@ export default function ChatPage() {
           <button
             type="button"
             aria-label="채팅 검색하기"
-            onClick={() => {}}
+            onClick={() => { }}
             className=" ml-auto mr-6"
           >
             <Image src="/icons/generation.svg" alt="" width={19} height={19} />
           </button>
-          <button type="button" aria-label="더보기" onClick={() => {}}>
+          <button type="button" aria-label="더보기" onClick={() => { }}>
             <Image src="/icons/more.svg" alt="" width={3} height={18} />
           </button>
         </div>
       </header>
       {/* 본문 */}
       <section className="mx-4 mt-10">
-        <ChatList />
-        <ChatList />
         <ChatList />
       </section>
 

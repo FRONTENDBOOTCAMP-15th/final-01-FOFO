@@ -15,6 +15,7 @@ import { useActionState, useEffect, useState } from 'react';
 import { login } from '@/lib/api/login';
 import useUserStore from '@/store/authStore';
 import { useRouter } from 'next/navigation';
+import { Users } from '@/types/user';
 
 export default function LoginPage() {
   /* ========== 상태 ========== */
@@ -23,7 +24,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [state, formAction, isPending] = useActionState(login, null);
-  const setToken = useUserStore(state => state.setToken);
+  const { setUser, setToken } = useUserStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function LoginPage() {
 
     if (state.ok === 1) {
       setToken(state.item.token.accessToken);
+      setUser(state.item as Users);
       router.push('/products');
     }
 
@@ -152,11 +154,10 @@ export default function LoginPage() {
               type="submit"
               disabled={!isValid || isPending} // 버튼 비활성화 조건
               className={`mt-7.5 w-full h-14 rounded-lg transition-colors 
-                  ${
-                    isValid // 로그인 중(isPending)이라도 입력만 올바르다면 파란색 유지!
-                      ? 'text-white bg-[#60CFFF] cursor-pointer'
-                      : 'text-[#8A8F99] bg-[#E5E5EA] cursor-not-allowed'
-                  } 
+                  ${isValid // 로그인 중(isPending)이라도 입력만 올바르다면 파란색 유지!
+                  ? 'text-white bg-[#60CFFF] cursor-pointer'
+                  : 'text-[#8A8F99] bg-[#E5E5EA] cursor-not-allowed'
+                } 
                   ${isPending ? 'opacity-70' : ''}`}
             >
               {/* TODO 로그인 <- 나중에 삭제*/}
