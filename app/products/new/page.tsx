@@ -10,6 +10,7 @@ import {
   CATEGORY_MAP,
   PetType,
   MainCategoryKey,
+  MAIN_CATEGORY_LABELS,
 } from '@/app/products/new/category'; //카테고리 상수
 import { useRouter } from 'next/navigation'; // 라우터 훅(페이지 이동)
 import { registProduct } from '@/lib/api/new'; // 상품 등록 API 함수
@@ -20,14 +21,12 @@ export default function MyFofoPage() {
   /* ========== 상태 ========== */
   const [photos, setPhotos] = useState<File[]>([]);
   const [petType, setPetType] = useState<PetType>('dog');
-  const [mainCategory, setMainCategory] = useState<MainCategoryKey>('사료');
-  const [subCategory, setSubCategory] = useState(
-    CATEGORY_MAP['dog']['사료'][0]
-  );
+  const [mainCategory, setMainCategory] = useState<MainCategoryKey>('food');
+  const [subCategory, setSubCategory] = useState('dry');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [condition, setCondition] = useState('used');
+  const [condition, setCondition] = useState('used');
   const [tradeType, setTradeType] = useState('direct');
   const [tradeLocation, setTradeLocation] = useState('');
 
@@ -69,21 +68,23 @@ export default function MyFofoPage() {
       setPrice(formattedValue);
     }
   };
+
   /* 반려동물 선택(button) <-> 메인 카테고리 */
-  const handlePetChange = (type: 'dog' | 'cat') => {
+  const handlePetChange = (type: PetType) => {
     setPetType(type);
-    setMainCategory('사료'); // 메인 초기화
-    setSubCategory(CATEGORY_MAP[type]['사료'][0]); // 첫 번째 서브 항목으로 초기화
+    setMainCategory('food');
+    const firstSubKey = Object.keys(CATEGORY_MAP[type]['food'])[0];
+    setSubCategory(firstSubKey);
   };
 
   /* 카테고리(button) <-> 서브 카테고리 */
   const handleMainChange = (category: MainCategoryKey) => {
     setMainCategory(category);
-    // 현재 petType에 맞춰서 해당 카테고리의 첫 번째 항목 선택
-    setSubCategory(CATEGORY_MAP[petType][category][0]);
+    const firstSubKey = Object.keys(CATEGORY_MAP[petType][category])[0];
+    setSubCategory(firstSubKey);
   };
 
-  /* TODO 상품 등록(button) : 이해가 필요한 부분 */
+  /* 상품 등록(button) */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO 로그인하시오 팝업창이 두번 뜨는 것을 방지? 이벤트가 다른 곳으로 퍼지는 것을 방지
@@ -112,17 +113,12 @@ export default function MyFofoPage() {
       return;
     }
 
-    // 2. 토큰 가져오기 (토큰이 있다고 가정)
-    // 팀의 방식에 따라 localStorage나 변수에서 가져옵니다.
-    // const accessToken = localStorage.getItem('accessToken') || '';
-
-    // 3. 서버 규격(SellerProduct)에 맞게 데이터 객체 생성
     const productData: SellerProduct = {
-      name: title, // 서버 필드명은 name
-      content: description, // 서버 필드명은 content
-      price: Number(price.replace(/,/g, '')), // 콤마 제거 후 숫자로 변환
-      quantity: 1, // 기본 수량
-      mainImages: [], // 이미지 업로드 전이므로 우선 빈 배열
+      name: title,
+      content: description,
+      price: Number(price.replace(/,/g, '')),
+      quantity: 1,
+      mainImages: [],
       extra: {
         pet: petType,
         mainCategory,
@@ -133,7 +129,6 @@ export default function MyFofoPage() {
       },
     };
 
-    // 4. API 호출 (new.ts의 함수 사용)
     try {
       // 인자 2개: 데이터와 토큰을 함께 보냅니다.
       // const result = await registProduct(productData);
@@ -141,9 +136,8 @@ export default function MyFofoPage() {
 
       if (result.ok === 1) {
         alert('상품이 성공적으로 등록되었습니다! 🎉');
-        router.push('/products'); // 등록 성공 후 목록 페이지로 이동
+        router.push('/products');
       } else {
-        // 서버에서 보내주는 에러 메시지가 있다면 보여줌
         alert(result.message || '등록에 실패했습니다. 다시 시도해주세요.');
       }
     } catch (error) {
@@ -165,7 +159,7 @@ export default function MyFofoPage() {
             </p>
             <div className="mt-1.5 pt-1.5 flex gap-3 overflow-x-auto pb-1.5">
               <label
-                htmlFor={photos.length < 10 ? 'profileUpload' : undefined} // 10장 미만일 때만 클릭 가능
+                htmlFor={photos.length < 10 ? 'profileUpload' : undefined}
                 className={`flex flex-col items-center justify-center shrink-0 w-21 h-21 border-2 border-dashed rounded-lg transition-colors ${
                   photos.length >= 10
                     ? 'bg-gray-100 border-[#E5E5EA] cursor-not-allowed'
@@ -194,7 +188,7 @@ export default function MyFofoPage() {
                   className="hidden"
                   accept="image/*"
                   multiple
-                  disabled={photos.length >= 10} // HTML 레벨에서도 비활성화
+                  disabled={photos.length >= 10}
                   onChange={handleAddPhoto}
                 />
               </label>
@@ -238,7 +232,6 @@ export default function MyFofoPage() {
               <div className="flex gap-3.75 mt-1.5">
                 <button
                   type="button"
-                  /* onClick={() => setPetType('dog')} */
                   onClick={() => handlePetChange('dog')}
                   className={`flex-1 px-15.75 py-4.25 rounded-lg text-[15px] ${
                     petType === 'dog'
@@ -250,7 +243,6 @@ export default function MyFofoPage() {
                 </button>
                 <button
                   type="button"
-                  /* onClick={() => setPetType('cat')} */
                   onClick={() => handlePetChange('cat')}
                   className={`flex-1 px-15.75 py-4.25 rounded-lg text-[15px] ${
                     petType === 'cat'
@@ -269,13 +261,11 @@ export default function MyFofoPage() {
                 카테고리
               </p>
               <div className="flex gap-3 mt-1.5">
-                {/* {['사료', '간식', '용품', '건강', '의류'].map(item => ( */}
                 {(Object.keys(CATEGORY_MAP[petType]) as MainCategoryKey[]).map(
                   item => (
                     <button
                       key={item}
                       type="button"
-                      /* onClick={() => setMainCategory(item)} */
                       onClick={() => handleMainChange(item)}
                       className={`flex-1 px-4.5 py-2.25 rounded-lg text-[13px] ${
                         mainCategory === item
@@ -283,7 +273,7 @@ export default function MyFofoPage() {
                           : 'text-[#8A8F99] border border-[#E5E5EA] bg-white'
                       }`}
                     >
-                      {item}
+                      {MAIN_CATEGORY_LABELS[item]}
                     </button>
                   )
                 )}
@@ -292,31 +282,31 @@ export default function MyFofoPage() {
 
             {/* 하위 카테고리 */}
             <div className="grid justify-between grid-cols-3 gap-4">
-              {/* {['건식', '습식/화식', '건조', '기타'].map((label, idx) => ( */}
-              {CATEGORY_MAP[petType][mainCategory].map((label, idx) => (
-                <label
-                  key={label}
-                  htmlFor={`food-${idx}`}
-                  className="flex items-center gap-2.5 ml-4 cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    id={`food-${idx}`}
-                    name="subCategory" // 같은 그룹임을 명시
-                    value={label}
-                    checked={subCategory === label}
-                    /* onChange={e => setSubCategory(e.target.value)} */
-                    onChange={e => setSubCategory(e.target.value)}
-                    className="peer hidden"
-                  />
-                  <div className="w-5.5 h-5.5 rounded-full border border-[#E5E5EA] flex items-center justify-center transition-colors bg-white peer-checked:border-[#60CFFF] peer-checked:[&>div]:scale-100 peer-checked:[&>div]:opacity-100">
-                    <div className="w-3 h-3 rounded-full bg-[#60CFFF] transition-all duration-200 transform scale-0 opacity-0" />
-                  </div>
-                  <span className="text-[13px] text-[#8A8F99] peer-checked:text-[#0F1218]">
-                    {label}
-                  </span>
-                </label>
-              ))}
+              {Object.entries(CATEGORY_MAP[petType][mainCategory]).map(
+                ([key, label], idx) => (
+                  <label
+                    key={key}
+                    htmlFor={`food-${idx}`}
+                    className="flex items-center gap-2.5 ml-4 cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      id={`food-${idx}`}
+                      name="subCategory"
+                      value={key}
+                      checked={subCategory === key}
+                      onChange={e => setSubCategory(e.target.value)}
+                      className="peer hidden"
+                    />
+                    <div className="w-5.5 h-5.5 rounded-full border border-[#E5E5EA] flex items-center justify-center transition-colors bg-white peer-checked:border-[#60CFFF] peer-checked:[&>div]:scale-100 peer-checked:[&>div]:opacity-100">
+                      <div className="w-3 h-3 rounded-full bg-[#60CFFF] transition-all duration-200 transform scale-0 opacity-0" />
+                    </div>
+                    <span className="text-[13px] text-[#8A8F99] peer-checked:text-[#0F1218]">
+                      {label}
+                    </span>
+                  </label>
+                )
+              )}
             </div>
 
             {/* 제목 */}
@@ -365,8 +355,8 @@ export default function MyFofoPage() {
                   onInput={e => {
                     const target = e.currentTarget;
                     target.value = target.value
-                      .replace(/[^0-9.]/g, '') // 숫자와 소수점 이외의 문자 제거
-                      .replace(/(\..*)\./g, '$1'); // 소수점 2개 이상 입력 방지
+                      .replace(/[^0-9.]/g, '')
+                      .replace(/(\..*)\./g, '$1');
                   }}
                   className="w-full h-full px-4 border border-[#E5E5EA] rounded-lg text-[15px] text-[#0F1218] placeholder-[#8A8F99] focus:outline-none focus:border-[#60CFFF]"
                 />
@@ -385,9 +375,9 @@ export default function MyFofoPage() {
                 <div className="flex gap-3.75 mt-1.5">
                   <button
                     type="button"
-                    onClick={() => setCondition('used')}
+                    onClick={() => setCondition('used')}
                     className={`flex-1 h-13 rounded-lg text-[15px] ${
-                      condition === 'used'
+                      condition === 'used'
                         ? 'text-[#60CFFF] font-semibold border border-[#60cfff] bg-[#E8F8FF]'
                         : 'text-[#8A8F99] border border-[#E5E5EA] bg-white'
                     }`}

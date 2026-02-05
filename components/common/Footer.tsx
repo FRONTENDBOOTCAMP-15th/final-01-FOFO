@@ -1,5 +1,6 @@
 'use client';
 
+import NotificationBadge from '@/components/chat/NotificationBadge';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -57,23 +58,10 @@ export default function UnderBar() {
             AI 검색
           </span>
         </Link>
-        <Link href="/chat" className="flex flex-col items-center gap-0.75">
-          <Image
-            src={
-              isActive('/chat')
-                ? '/icons/footer-chat-fill.svg'
-                : '/icons/footer-chat-line.svg'
-            }
-            alt="채팅페이지"
-            width={22}
-            height={22}
-          />
-          <span
-            className={`text-[11px] leading-none ${isActive('/chat') ? 'text-br-primary-500' : 'text-br-button-disabled-text'}`}
-          >
-            포포톡
-          </span>
-        </Link>
+
+        {/* 포포톡 */}
+        <NotificationBadge />
+
         <Link href="/mypage" className="flex flex-col items-center gap-0.75">
           <Image
             src={

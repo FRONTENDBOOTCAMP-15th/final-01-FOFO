@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 //채팅 목록
-export default function ChatPage() {
+export default function ChatRoomPage() {
   const goBack = useRouter();
   return (
     <div className="font-pretendard pb-15 bg-[#F4F5FA] min-h-screen">
