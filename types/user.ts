@@ -6,7 +6,7 @@ export interface User {
   type: string;
   image?: string;
   extra?: {
-    pet: {
+    pet?: {
       type: 'dog' | 'cat';
       breed?: string;
       name: string;
