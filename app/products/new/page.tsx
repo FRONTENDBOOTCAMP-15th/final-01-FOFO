@@ -13,12 +13,12 @@ import {
   MAIN_CATEGORY_LABELS,
 } from '@/app/products/new/category'; //카테고리 상수
 import { useRouter } from 'next/navigation'; // 라우터 훅(페이지 이동)
-import { registProduct } from '@/lib/api/new'; // 상품 등록 API 함수
+import { registProduct, uploadFile } from '@/lib/api/new'; // 상품 등록 API 함수
 import { SellerProduct } from '@/types/product'; // 상품 타입
 import { embedSingleProduct } from '@/actions/ai-search/generate-embeddings';
 import useUserStore from '@/store/authStore';
 
-export default function MyFofoPage() {
+export default function NewPage() {
   /* ========== 상태 ========== */
   const [photos, setPhotos] = useState<File[]>([]);
   const [petType, setPetType] = useState<PetType>('dog');
@@ -27,8 +27,8 @@ export default function MyFofoPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [condition, setCondition] = useState('used');
-  const [tradeType, setTradeType] = useState('direct');
+  const [condition, setCondition] = useState<'new' | 'used'>('used');
+  const [tradeType, setTradeType] = useState<'direct' | 'delivery'>('direct');
   const [tradeLocation, setTradeLocation] = useState('');
 
   /* ========== 핸들러 ========== */
@@ -88,18 +88,17 @@ export default function MyFofoPage() {
   /* 상품 등록(button) */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO 로그인하시오 팝업창이 두번 뜨는 것을 방지? 이벤트가 다른 곳으로 퍼지는 것을 방지
     e.stopPropagation();
 
-    // TODO alert말고 다른 방법 생각
-    // 0. 로그인 체크
+    // 상품 등록(버튼 클릭 전) ---> 로그인 여부 확인
     if (!accessToken) {
       alert('로그인이 필요합니다.');
       router.push('/auth/login');
       return;
     }
 
-    // 1. 유효성 검사 (필수 입력값 확인)
+    // TODO alert말고 다른 방법 생각
+    // 상품 등록(버튼 클릭 전) ---> 유효성 검사(빈 칸 체크)
     if (photos.length === 0) return alert('사진을 1장 이상 추가해주세요');
     if (!title.trim()) {
       alert('제목을 입력해주세요');
@@ -113,33 +112,47 @@ export default function MyFofoPage() {
       alert('가격을 입력해주세요');
       return;
     }
-
-    const productData: SellerProduct = {
-      name: title,
-      content: description,
-      price: Number(price.replace(/,/g, '')),
-      quantity: 1,
-      mainImages: [],
-      extra: {
-        pet: petType,
-        mainCategory,
-        subCategory,
-        condition: condition === 'new' ? 'new' : 'used',
-        tradeType: tradeType as 'delivery' | 'direct' | 'both',
-        tradeLocation,
-      },
-    };
+    if (!tradeLocation.trim()) {
+      alert('거래 장소를 입력해주세요');
+      return;
+    }
 
     try {
-      // 인자 2개: 데이터와 토큰을 함께 보냅니다.
-      // const result = await registProduct(productData);
+      // 상품 등록(버튼 클릭 후) ---> 사진 업로드
+      const uploadResults = await Promise.all(
+        photos.map(file => uploadFile(file))
+      );
+
+      // 상품 등록(버튼 클릭 후) ---> 업로드 된 파일 정보 추출
+      const mainImages = uploadResults.map(res => ({
+        path: res.item[0].path,
+        name: res.item[0].name,
+      }));
+
+      // 상품 등록(버튼 클릭 후) ---> 전송할 데이터 구성
+      const productData: SellerProduct = {
+        name: title,
+        content: description,
+        price: Number(price.replace(/,/g, '')),
+        quantity: 1,
+        mainImages: mainImages,
+        extra: {
+          pet: petType,
+          mainCategory,
+          subCategory,
+          condition,
+          tradeType,
+          tradeLocation,
+        },
+      };
+
+      // 상품 등록 ---> API 호출
       const result = await registProduct(productData, accessToken);
 
+      // 상품 등록(버튼 클릭 후) ---> 결과 처리
       if (result.ok) {
-        // 등록된 상품의 id
+        // 상품 등록 성공 시 임베딩 작업 시작
         const productId = result.item._id;
-
-        // 등록될 때 등록되는 상품 임베딩 작업
         embedSingleProduct(productId).catch(err => {
           console.error('단일 상품 임베딩 실패:', err);
         });
