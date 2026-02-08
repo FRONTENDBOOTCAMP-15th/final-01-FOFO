@@ -19,10 +19,14 @@ export default function ProductDetailClient({
   detail,
   sellerProducts,
   review,
+  initialIsWished,
+  initialBookmarkId,
 }: {
   detail: ProductDetail;
   sellerProducts: SellerProductList[];
   review: UserReview[];
+  initialIsWished: boolean;
+  initialBookmarkId: number | null;
 }) {
   const [activeTab, setActiveTab] = useState('productInfo');
   const [isWished, setIsWished] = useState(false);
@@ -38,6 +42,7 @@ export default function ProductDetailClient({
         mainImages: detail.mainImages,
         seller: detail.seller,
         bookmarks: detail.bookmarks,
+        seller_id: detail.seller_id,
       });
     }
   }, [detail._id]);
@@ -47,21 +52,15 @@ export default function ProductDetailClient({
     const checkWishStatus = async () => {
       const bookmarkData = await getBookmarks();
       if (bookmarkData.ok === 1) {
-        let myBookmark = null;
-        for (let i = 0; i < bookmarkData.item.length; i++) {
-          const eachBookmark = bookmarkData.item[i];
-          if (eachBookmark.product._id === detail._id) {
-            myBookmark = eachBookmark;
-            break;
-          }
-        }
+        const myBookmark = bookmarkData.item.find(
+          bookmark => bookmark.product._id === detail._id
+        );
         if (myBookmark) {
           setIsWished(true);
           setBookmarkId(myBookmark._id);
         }
       }
     };
-
     checkWishStatus();
   }, [detail._id]);
 
@@ -135,9 +134,11 @@ export default function ProductDetailClient({
             sellerReviews={review}
           />
         )}
+
         {/* 푸터 */}
         <ProductDetailFooter
           productId={detail._id}
+          sellerId={detail.seller._id}
           initialIsWished={isWished}
           initialBookmarkId={bookmarkId}
         />

@@ -1,28 +1,46 @@
 import { addBookmark, deleteBookmark } from '@/lib/api/bookmarks';
+import useUserStore from '@/store/authStore';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // 상품 상세 페이지 푸터
 export default function ProductDetailFooter({
   productId,
+  sellerId,
   initialIsWished = false,
   initialBookmarkId = null,
 }: {
   productId: number;
+  sellerId: number;
   initialIsWished?: boolean;
   initialBookmarkId?: number | null;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user } = useUserStore();
+
   const [isWished, setIsWished] = useState(initialIsWished);
   const [bookmarkId, setBookmarkId] = useState<number | null>(
     initialBookmarkId
   );
+
+  // 현재 사용자가 판매자인지 확인
+  const isSeller = user?._id === sellerId;
+
   useEffect(() => {
     setIsWished(initialIsWished);
     setBookmarkId(initialBookmarkId);
   }, [initialIsWished, initialBookmarkId]);
 
   const wishClick = async () => {
+    // 비로그인 상태면 로그인 페이지로
+    if (!user) {
+      router.push(`/auth/login?redirect=${pathname}`);
+      return;
+    }
+
     try {
       if (isWished && bookmarkId) {
         const result = await deleteBookmark(bookmarkId);
@@ -41,6 +59,32 @@ export default function ProductDetailFooter({
       console.error('찜하기 처리 중 오류:', error);
     }
   };
+
+  const chatClick = (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault(); // Link 동작 막기
+      router.push(`/auth/login?redirect=${pathname}`);
+      return;
+    }
+  };
+
+  // 상태 변경 버튼
+  const statusClick = () => {
+    // 채팅 완료되면 ,,
+  };
+
+  if (isSeller) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 flex gap-2 px-4 py-3 bg-white border-t border-br-input-disabled-line">
+        <button
+          onClick={statusClick}
+          className="flex-1 py-4 font-light bg-br-button-active-bg text-br-button-active-text rounded-xl text-center"
+        >
+          상태 변경
+        </button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -61,7 +105,8 @@ export default function ProductDetailFooter({
         </button>
         {/* 채팅하기 */}
         <Link
-          href={`/chat/id`}
+          href="/chat"
+          onClick={chatClick}
           className="flex-1 py-4 font-light bg-br-button-active-bg text-br-button-active-text rounded-xl text-center"
         >
           채팅 하기
