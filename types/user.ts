@@ -16,6 +16,10 @@ export interface User {
     };
     introduce: string;
   };
+  token?: {
+    accessToken: string;
+    refreshToken: string;
+  };
 }
 
 //로그인 응답
@@ -70,26 +74,4 @@ export interface UpdateUser {
   };
 }
 
-//알림 타입
-export interface Users {
-  _id: number;
-  email: string;
-  name: string;
-  type: string;
-  image?: string;
-  extra?: {
-    pet: {
-      type: 'dog' | 'cat';
-      breed?: string;
-      name: string;
-      weight: number;
-      ageGroup: 'junior' | 'adult' | 'senior';
-      image?: string;
-    };
-    introduce: string;
-  };
-  token?: {
-    accessToken: string;
-    refreshToken: string;
-  };
-}
+
