@@ -12,6 +12,8 @@ export interface Product {
   price: number;
   name: string;
   mainImages: ProductImages[];
+  quantity?: number;
+  buyQuantity?: number;
   show?: boolean;
   active?: boolean;
   createdAt: string;
@@ -100,6 +102,32 @@ export interface OrderCorrection {
   user_id: number;
   product_id: number;
   quantity: number;
+}
+
+// 판매 확정 응답 타입
+export interface OrderItem {
+  _id: number;
+  user_id: number;
+  product_id: number;
+  quantity: number;
+  state: string;
+  products?: {
+    _id: number;
+    name: string;
+    price: number;
+    seller_id: number;
+    image?: {
+      path: string;
+      name: string;
+    };
+  }[];
+  createdAt: string;
+  updatedAt: string;
+  cost?: {
+    products: number;
+    shippingFees: number;
+    total: number;
+  };
 }
 
 // 판매자의 다른 상품 리스트, 판매 내역 페이지

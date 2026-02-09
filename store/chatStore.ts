@@ -1,10 +1,9 @@
-'use client'
+'use client';
 import { create } from 'zustand';
 import { io, Socket } from 'socket.io-client';
-import { ChatMessage, ChatRoom, ChatRoomState } from '@/app/chat/_types/chat';
-import { Users } from '@/types/user';
-import { getMyRooms } from '@/app/chat/_api/chat';
-
+import { ChatMessage, ChatRoom, ChatRoomState } from '@/types/chat';
+import { User } from '@/types/user';
+import { getMyRooms } from '@/lib/api/chat';
 
 const SERVER = process.env.NEXT_PUBLIC_PRIVATE_CHAT_URL;
 const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID;
@@ -16,9 +15,9 @@ interface ChatStoreState {
   messagesByRoom: Record<number, ChatMessage[]>; // 채팅 룸별 메시지
   rooms: ChatRoomState[]; // 채팅 룸 목록(메시지는 포함 안됨)
   activeRoomId: number | undefined; // 현재 활성화된 채팅 룸
-  
+
   // Actions
-  connectSocket: (user: Users) => void; // 채팅 소켓 연결
+  connectSocket: (user: User) => void; // 채팅 소켓 연결
   disconnectSocket: () => void; // 채팅 소켓 연결 해제
   setMessages: (roomId: number, messages: ChatMessage[]) => void; // 채팅 룸별 메시지 설정
   setActiveRoomId: (roomId: number | undefined) => void; // 현재 활성화된 채팅 룸 설정
@@ -38,7 +37,7 @@ const useChatStore = create<ChatStoreState>((set, get) => ({
   activeRoomId: undefined,
 
   // 채팅 소켓 연결
-  connectSocket: async (user: Users) => {
+  connectSocket: async (user: User) => {
     // 로그인 정보가 없거나 소켓 연결 중이거나 연결이 된 상태면 연결하지 않음
     if (!user || get().chatSocket?.connected || get().isConnecting) return;
 
@@ -56,10 +55,10 @@ const useChatStore = create<ChatStoreState>((set, get) => ({
       socket.on('connect', () => {
         console.log('채팅 서버 연결 완료');
         set({ chatSocket: socket, isConnecting: false }); // 상태 변경
-        
+
         // 메시지 수신을 위한 사용자 id 등록
         socket.emit('setUser', { userId: user._id, nickName: user.name });
-        
+
         // 현재 활성화된 방 유지(연결이 끊긴 후 재연결 될때 활성화된 방 인식)
         const roomId = get().activeRoomId;
         if (roomId) socket.emit('setActiveRoomId', roomId);
@@ -79,23 +78,29 @@ const useChatStore = create<ChatStoreState>((set, get) => ({
         }
 
         // 2. 활성화된 채팅룸의 메시지 목록 및 상태 업데이트
-        set((state) => {
+        set(state => {
           const currentMessages = state.messagesByRoom[roomId] || [];
           const updatedMessages = [...currentMessages, msg];
-          
+
           const otherRooms = state.rooms.filter(room => room._id !== roomId);
           const isMyMessage = msg.senderId === user._id;
           const isActiveRoom = state.activeRoomId === roomId;
 
-          const updatedRoom: ChatRoomState = { 
-            ...targetRoom, 
+          const updatedRoom: ChatRoomState = {
+            ...targetRoom,
             lastMessage: msg,
-            unreadCount: (!isMyMessage && !isActiveRoom) ? (targetRoom.unreadCount || 0) + 1 : targetRoom.unreadCount
+            unreadCount:
+              !isMyMessage && !isActiveRoom
+                ? (targetRoom.unreadCount || 0) + 1
+                : targetRoom.unreadCount,
           };
 
           return {
-            messagesByRoom: { ...state.messagesByRoom, [roomId]: updatedMessages },
-            rooms: [updatedRoom, ...otherRooms]
+            messagesByRoom: {
+              ...state.messagesByRoom,
+              [roomId]: updatedMessages,
+            },
+            rooms: [updatedRoom, ...otherRooms],
           };
         });
       });
@@ -104,36 +109,40 @@ const useChatStore = create<ChatStoreState>((set, get) => ({
       socket.on('connect_error', () => set({ isConnecting: false }));
 
       // 연결이 끊어졌을 경우 소켓을 null로 초기화
-      socket.on('disconnect', () => set({ chatSocket: null, isConnecting: false }));
+      socket.on('disconnect', () =>
+        set({ chatSocket: null, isConnecting: false })
+      );
 
       // 상대방의 메시지 읽음 확인 신호 수신
-      socket.on('readReceipt', ({ roomId, userId }: { roomId: number, userId: number }) => {
-        set((state) => {
-          const currentMessages = state.messagesByRoom[roomId] || [];
-          if (currentMessages.length === 0) return state;
+      socket.on(
+        'readReceipt',
+        ({ roomId, userId }: { roomId: number; userId: number }) => {
+          set(state => {
+            const currentMessages = state.messagesByRoom[roomId] || [];
+            if (currentMessages.length === 0) return state;
 
-          const updatedMessages = currentMessages.map(msg => ({
-            ...msg,
-            readUserIds: msg.readUserIds.includes(userId) 
-              ? msg.readUserIds 
-              : [...msg.readUserIds, userId]
-          }));
+            const updatedMessages = currentMessages.map(msg => ({
+              ...msg,
+              readUserIds: msg.readUserIds.includes(userId)
+                ? msg.readUserIds
+                : [...msg.readUserIds, userId],
+            }));
 
-          return {
-            messagesByRoom: { 
-              ...state.messagesByRoom, 
-              [roomId]: updatedMessages 
-            }
-          };
-        });
-      });
+            return {
+              messagesByRoom: {
+                ...state.messagesByRoom,
+                [roomId]: updatedMessages,
+              },
+            };
+          });
+        }
+      );
 
       set({ chatSocket: socket });
 
       // 리스너 등록 후 방 목록 API 호출
       const serverRooms = await getMyRooms(user.token!.accessToken);
       get().setRooms(serverRooms, user._id);
-
     } catch (err) {
       console.error('채팅 서버 연결 실패:', err);
       set({ isConnecting: false });
@@ -151,59 +160,69 @@ const useChatStore = create<ChatStoreState>((set, get) => ({
   },
 
   // 채팅 룸별 메시지 설정(해당 룸 선택시 api 서버에서 룸 상세정보 조회후 호출됨)
-  setMessages: (roomId, messages) => 
-    set((state) => ({ 
-      messagesByRoom: { ...state.messagesByRoom, [roomId]: messages } 
+  setMessages: (roomId, messages) =>
+    set(state => ({
+      messagesByRoom: { ...state.messagesByRoom, [roomId]: messages },
     })),
 
   // 보고 있는 채팅룸 지정
-  setActiveRoomId: (roomId) => set((state) => ({ 
-    activeRoomId: roomId,
-    // 활성화된 방의 읽지 않은 메시지 수를 0으로 초기화
-    rooms: state.rooms.map(room => 
-      room._id === roomId ? { ...room, unreadCount: 0 } : room
-    )
-  })),
+  setActiveRoomId: roomId =>
+    set(state => ({
+      activeRoomId: roomId,
+      // 활성화된 방의 읽지 않은 메시지 수를 0으로 초기화
+      rooms: state.rooms.map(room =>
+        room._id === roomId ? { ...room, unreadCount: 0 } : room
+      ),
+    })),
 
   // 채팅 룸 목록 설정(채팅방 목록 조회후 호출됨)
   setRooms: (serverRooms, userId) => {
     const rooms: ChatRoomState[] = serverRooms.map(room => ({
       ...room,
       lastMessage: room.messages.at(-1),
-      unreadCount: room.messages.filter(msg => !msg.readUserIds.includes(userId)).length
+      unreadCount: room.messages.filter(
+        msg => !msg.readUserIds.includes(userId)
+      ).length,
     }));
     set({ rooms, isInitialized: true });
   },
 
   // 채팅방 추가 (이미 목록에 있으면 놔두고 없으면 추가)
-  addRooms: (room, userId) => set((state) => {
-    const exists = state.rooms.some(r => r._id === room._id);
-    if (exists) return state; // 이미 목록에 있으면 상태 변경 없음
+  addRooms: (room, userId) =>
+    set(state => {
+      const exists = state.rooms.some(r => r._id === room._id);
+      if (exists) return state; // 이미 목록에 있으면 상태 변경 없음
 
-    // 새로운 방을 ChatRoomState 형식으로 변환
-    const newRoom: ChatRoomState = {
-      ...room,
-      lastMessage: room.messages.at(-1),
-      unreadCount: room.messages.filter(msg => !msg.readUserIds.includes(userId)).length || 0
-    };
+      // 새로운 방을 ChatRoomState 형식으로 변환
+      const newRoom: ChatRoomState = {
+        ...room,
+        lastMessage: room.messages.at(-1),
+        unreadCount:
+          room.messages.filter(msg => !msg.readUserIds.includes(userId))
+            .length || 0,
+      };
 
-    return { 
-      rooms: [newRoom, ...state.rooms] 
-    };
-  }),
+      return {
+        rooms: [newRoom, ...state.rooms],
+      };
+    }),
 
   // 채팅방 나가기 (채팅 목록에서 삭제)
-  leaveRoom: (roomId) => set((state) => {
-    const updatedRooms = state.rooms.filter(room => room._id === roomId ? false : true);
-    const newMessagesByRoom = { ...state.messagesByRoom };
-    delete newMessagesByRoom[roomId];
+  leaveRoom: roomId =>
+    set(state => {
+      const updatedRooms = state.rooms.filter(room =>
+        room._id === roomId ? false : true
+      );
+      const newMessagesByRoom = { ...state.messagesByRoom };
+      delete newMessagesByRoom[roomId];
 
-    return {
-      rooms: updatedRooms,
-      messagesByRoom: newMessagesByRoom,
-      activeRoomId: state.activeRoomId === roomId ? undefined : state.activeRoomId
-    };
-  }),
+      return {
+        rooms: updatedRooms,
+        messagesByRoom: newMessagesByRoom,
+        activeRoomId:
+          state.activeRoomId === roomId ? undefined : state.activeRoomId,
+      };
+    }),
 }));
 
 export default useChatStore;

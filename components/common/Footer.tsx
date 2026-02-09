@@ -1,20 +1,28 @@
 'use client';
 
-import NotificationBadge from '@/app/chat/_components/NotificationBadge';
+import NotificationBadge from '@/components/chat/NotificationBadge';
+import useUserStore from '@/store/authStore';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
-//푸터
 export default function UnderBar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const user = useUserStore(state => state.user);
+
   const isActive = (href: string) => {
-    // 홈인 (/products)는 루트인 /이거나 /products일 때만 활성
     if (href === '/products')
       return pathname === '/products' || pathname === '/';
-
-    // 나머지는 하위 경로까지 활성
     return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
+  // 로그인 필요한 페이지 클릭 핸들러
+  const handleAuthRequired = (e: React.MouseEvent, href: string) => {
+    if (!user) {
+      e.preventDefault();
+      router.push('/auth');
+    }
   };
 
   return (
@@ -32,14 +40,16 @@ export default function UnderBar() {
             height={22}
           />
           <span
-            className={`text-[11px] leading-none ${isActive('/products')
-              ? 'text-br-primary-500'
-              : 'text-br-button-disabled-text'
-              }`}
+            className={`text-[11px] leading-none ${
+              isActive('/products')
+                ? 'text-br-primary-500'
+                : 'text-br-button-disabled-text'
+            }`}
           >
             홈
           </span>
         </Link>
+
         <Link href="/search" className="flex flex-col items-center gap-0.75">
           <Image
             src={
@@ -52,16 +62,43 @@ export default function UnderBar() {
             height={22}
           />
           <span
-            className={`text-[11px] leading-none ${isActive('/search') ? 'text-br-primary-500' : 'text-br-button-disabled-text'}`}
+            className={`text-[11px] leading-none ${
+              isActive('/search')
+                ? 'text-br-primary-500'
+                : 'text-br-button-disabled-text'
+            }`}
           >
             AI 검색
           </span>
         </Link>
 
         {/* 포포톡 */}
-        <NotificationBadge />
+        {user ? (
+          <NotificationBadge />
+        ) : (
+          <Link
+            href="/chat"
+            onClick={e => handleAuthRequired(e, '/chat')}
+            className="relative flex flex-col items-center gap-0.75"
+          >
+            <Image
+              src="/icons/footer-chat-line.svg"
+              alt="채팅페이지"
+              width={22}
+              height={22}
+            />
+            <span className="text-[11px] leading-none text-br-button-disabled-text">
+              포포톡
+            </span>
+          </Link>
+        )}
 
-        <Link href="/mypage" className="flex flex-col items-center gap-0.75">
+        {/* 마이페이지 */}
+        <Link
+          href="/mypage"
+          onClick={e => handleAuthRequired(e, '/mypage')}
+          className="flex flex-col items-center gap-0.75"
+        >
           <Image
             src={
               isActive('/mypage')
@@ -73,7 +110,11 @@ export default function UnderBar() {
             height={22}
           />
           <span
-            className={`text-[11px] leading-none ${isActive('/mypage') ? 'text-br-primary-500' : 'text-br-button-disabled-text'}`}
+            className={`text-[11px] leading-none ${
+              isActive('/mypage')
+                ? 'text-br-primary-500'
+                : 'text-br-button-disabled-text'
+            }`}
           >
             마이페이지
           </span>

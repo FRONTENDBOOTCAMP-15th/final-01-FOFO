@@ -1,12 +1,12 @@
 'use client';
 
-import { useNoti } from '@/_hooks/useNoti';
+import useChat from '@/app/chat/_hooks/useChat';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function NotificationBadge() {
-  const { notifications } = useNoti();
+  const { totalUnreadCount } = useChat();
   const pathname = usePathname();
 
   const isActive = (href: string) => {
@@ -15,9 +15,9 @@ export default function NotificationBadge() {
 
   return (
     <Link href="/chat" className="relative flex flex-col items-center gap-0.75">
-      {notifications.length > 0 && (
+      {totalUnreadCount > 0 && (
         <span className="absolute -top-1 left-4 min-w-4 h-4 px-1 flex items-center justify-center bg-br-primary-500 text-white text-[10px] font-bold rounded-full">
-          {notifications.length > 99 ? '99+' : notifications.length}
+          {totalUnreadCount > 99 ? '99+' : totalUnreadCount}
         </span>
       )}
 

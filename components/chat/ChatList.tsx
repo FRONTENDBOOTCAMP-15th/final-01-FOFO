@@ -1,29 +1,23 @@
 'use client';
 
-import useChat from "@/app/chat/_hooks/useChat";
-import ChatItem from "@/app/chat/ChatItem";
-import useUserStore from "@/store/authStore";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import useChat from '@/app/chat/_hooks/useChat';
+import ChatItem from '@/components/chat/ChatItem';
+import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function ChatList() {
-
   const {
-    rooms, // 채팅방 목록
+    rooms, // 전체 채팅방 목록 배열
     activeRoomId, // 현재 활성화된 방의 ID
-    leaveRoom, // 채팅방 나가기
-    enterRoom // 채팅방 입장
+    enterRoom, // 채팅방 입장
   } = useChat();
 
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user: currentUser } = useUserStore();
-
   return (
     <div>
-      {rooms.map((room) => (
+      {rooms.map(room => (
         <ChatItem
           key={room._id}
           room={room}
@@ -33,7 +27,6 @@ export default function ChatList() {
             // 선택 시 URL 파라미터 초기화
             router.replace(pathname);
           }}
-          onLeave={(id: string) => { leaveRoom(Number(id)); }}
         />
       ))}
     </div>

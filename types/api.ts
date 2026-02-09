@@ -1,4 +1,4 @@
-import { ChatRoom } from '@/app/chat/_types/chat';
+import { ChatRoom } from '@/types/chat';
 
 export interface ChatRoomListRes {
   ok: 1;
@@ -12,10 +12,10 @@ export interface ChatRoomInfoRes {
 
 // 서버 검증 에러 타입
 export interface ServerValidationError {
-  type: string,
-  value: string,
-  msg: string,
-  location: string
+  type: string;
+  value: string;
+  msg: string;
+  location: string;
 }
 
 // 에러 타입

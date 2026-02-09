@@ -1,22 +1,54 @@
 'use client';
 
 import Header from '@/components/common/Header';
+import useUserStore from '@/store/authStore';
 import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { postReview } from '@/lib/api/replies';
+import { getOrderDetail } from '@/lib/api/orders';
+import { getProductDetail } from '@/lib/api/products';
+import { OrderItem } from '@/types/product';
 
-export default function ReviewPage() {
+export default function ReviewItem({ orderId }: { orderId: string }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const accessToken = useUserStore(state => state.accessToken);
 
-  //url로 정보 가져오기 (채팅페이지에서 넘겨줄 예정)
-  const orderId = searchParams.get('order_id');
-  const productId = searchParams.get('product_id');
-  const sellerName = searchParams.get('seller_name');
-
+  const [order, setOrder] = useState<OrderItem | null>(null);
+  const [sellerName, setSellerName] = useState<string>('판매자');
+  const [sellerImage, setSellerImage] = useState<string>('');
   const [rating, setRating] = useState<number>(5);
   const [content, setContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // 주문 정보 가져오기
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!accessToken) return;
+
+      const res = await getOrderDetail(orderId, accessToken);
+
+      if (res.ok === 1) {
+        setOrder(res.item);
+
+        // 상품 정보에서 판매자 정보 가져오기
+        const productId = res.item.products?.[0]?._id;
+        if (productId) {
+          const productRes = await getProductDetail(String(productId));
+          if (productRes.ok === 1) {
+            setSellerName(productRes.item.seller?.name || '판매자');
+            setSellerImage(productRes.item.seller?.image || '');
+          }
+        }
+      } else {
+        alert('주문 정보를 찾을 수 없습니다.');
+        router.back();
+      }
+      setLoading(false);
+    };
+
+    fetchOrder();
+  }, [orderId, accessToken, router]);
 
   const handleSubmit = async () => {
     if (!content.trim()) {
@@ -24,25 +56,47 @@ export default function ReviewPage() {
       return;
     }
 
-    if (!orderId || !productId) {
+    if (!order || !accessToken) {
       alert('주문 정보가 없습니다.');
       return;
     }
 
-    const res = await postReview({
-      order_id: Number(orderId),
-      product_id: Number(productId),
-      rating,
-      content,
-    });
+    const productId = order.products?.[0]?._id;
+    if (!productId) {
+      alert('상품 정보가 없습니다.');
+      return;
+    }
+
+    const res = await postReview(
+      {
+        order_id: order._id,
+        product_id: productId,
+        rating,
+        content,
+      },
+      accessToken
+    );
 
     if (res.ok === 1) {
       alert('후기가 등록되었습니다!');
-      router.push('/'); //
+      router.push('/');
     } else {
       alert(res.message || '후기 등록에 실패했습니다.');
     }
   };
+
+  if (loading) {
+    return (
+      <>
+        <Header title="발자국 등록" />
+        <div className="flex justify-center items-center h-screen">
+          <p>로딩 중...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (!order) return null;
 
   return (
     <>
@@ -52,15 +106,15 @@ export default function ReviewPage() {
         {/* 프로필 */}
         <section className="flex items-center gap-3 py-6 lg:flex-col lg:items-center">
           <Image
-            src="/icons/chat-profile.svg"
+            src={sellerImage || '/icons/chat-profile.svg'}
             alt="프로필"
             width={70}
             height={70}
-            className="w-14 h-14 rounded-full"
+            className="w-14 h-14 rounded-full object-cover"
           />
           <div className="lg:flex lg:flex-col lg:items-center">
             <p className="text-br-input-active-text font-medium">
-              {sellerName}
+              {sellerName}님과
             </p>
             <p className="font-medium text-br-input-active-text">
               거래하셨나요?
