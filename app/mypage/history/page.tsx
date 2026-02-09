@@ -9,7 +9,7 @@ import { getRecentProducts, RecentProductItem } from '@/lib/utils/storage';
 import { useEffect, useState } from 'react';
 
 export default function HistoryPage() {
-  const [products, setProducts] = useState(getRecentProducts);
+  const [products, setProducts] = useState<RecentProductItem[]>([]);
   const [wishedProductIds, setWishedProductIds] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -26,7 +26,7 @@ export default function HistoryPage() {
         wishedIds = bookmarkData.item.map(bookmark => bookmark.product._id);
       }
 
-      // 둘 다 준비되면 한 번에 set(자꾸 숫자 이상해지는 오류 해결됨)
+      // 둘 다 준비되면 한 번에 set
       setProducts(recentProducts);
       setWishedProductIds(wishedIds);
       setIsLoading(false);
@@ -44,9 +44,9 @@ export default function HistoryPage() {
       <Header title="최근 본 상품" />
 
       {/* 최근 본 상품 목록 */}
-      <div className="pb-20">
+      <div className="pb-20 font-pretendard">
         {products.length === 0 ? (
-          <div className="p-4 text-center text-br-text-body">
+          <div className="text-center mt-20 text-gray-500">
             최근 본 상품이 없습니다.
           </div>
         ) : (
