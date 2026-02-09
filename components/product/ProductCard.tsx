@@ -12,8 +12,6 @@ export default function ProductCard({
   bookmarks,
   views,
 }: ProductList) {
-  console.log(mainImages);
-  // link id변경
   return (
     <Link href={`/products/${_id}`}>
       <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
