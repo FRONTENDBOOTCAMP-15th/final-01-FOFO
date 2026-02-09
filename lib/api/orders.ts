@@ -13,6 +13,21 @@ export async function mypageOrderProductList(): Promise<
     const { accessToken, user } = useUserStore.getState();
 
     const res = await fetch(`${API_URL}/orders`, {
+      headers: {
+        'Client-Id': CLIENT_ID,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return res.json();
+  } catch (error) {
+    console.error(error);
+    return {
+      ok: 0,
+      message: '구매 내역을 불러오는데 실패했습니다.',
+    };
+  }
+}
 // 판매 확정 (판매자가 구매 처리)
 export async function confirmSale(
   {
