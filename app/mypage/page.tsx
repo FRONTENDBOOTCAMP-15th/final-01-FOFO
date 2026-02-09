@@ -3,6 +3,7 @@
 import UnderBar from '@/components/common/Footer';
 import Header from '@/components/common/Header';
 import { getUserInfo } from '@/lib/api/users';
+import useUserStore from '@/store/authStore';
 import { User } from '@/types/user';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,6 +14,12 @@ export default function MyPage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // 로그아웃
+  const handleLogout = () => {
+    useUserStore.getState().resetUser();
+    router.push('/'); // 홈으로 이동
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -296,7 +303,10 @@ export default function MyPage() {
               </button>
             </li>
             <li>
-              <button className="w-full flex items-center justify-between py-2">
+              <button
+                className="w-full flex items-center justify-between py-2"
+                onClick={handleLogout}
+              >
                 <span className="text-br-input-disabled-text">로그아웃</span>
                 <Image
                   src="/icons/arrow-right.svg"
