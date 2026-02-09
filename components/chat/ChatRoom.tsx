@@ -13,8 +13,15 @@ import Header from '@/components/common/Header';
 
 export default function ChatRoom({ id }: { id: string }) {
   const router = useRouter();
-  const { activeRoomId, rooms, messages, sendMessage, enterRoom, leaveRoom } =
-    useChat();
+  const {
+    activeRoomId,
+    rooms,
+    messages,
+    sendMessage,
+    enterRoom,
+    leaveRoom,
+    exitRoom,
+  } = useChat();
   const user = useUserStore(state => state.user);
   const accessToken = useUserStore(state => state.accessToken);
 
@@ -37,7 +44,10 @@ export default function ChatRoom({ id }: { id: string }) {
   useEffect(() => {
     if (!user?._id) return;
     enterRoom({ resourceType: 'product', resourceId: Number(id) });
-  }, [user, enterRoom, id]);
+    return () => {
+      exitRoom();
+    };
+  }, [user, enterRoom, exitRoom, id]);
 
   useEffect(() => {
     const checkMyOrder = async () => {
