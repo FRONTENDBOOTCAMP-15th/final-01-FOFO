@@ -73,7 +73,7 @@ export default function ChatItem({ room }: ChatItemProps) {
           alt={displayName}
           width={46}
           height={46}
-          className="w-[46px] h-[46px] rounded-full object-cover"
+          className="w-11.5 h-11.5 rounded-full object-cover"
         />
         {unreadCount > 0 && (
           <span className="absolute top-0 -right-2 bg-br-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -96,7 +96,7 @@ export default function ChatItem({ room }: ChatItemProps) {
         alt="상품 이미지"
         width={56}
         height={56}
-        className="rounded-[5px] ml-auto object-cover w-[56px] h-[56px]"
+        className="rounded-[5px] ml-auto object-cover w-14 h-14"
       />
     </Link>
   );

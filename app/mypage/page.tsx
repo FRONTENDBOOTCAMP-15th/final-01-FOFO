@@ -2,6 +2,7 @@
 
 import UnderBar from '@/components/common/Footer';
 import Header from '@/components/common/Header';
+import Spinner from '@/components/common/Spinner';
 import { getUserInfo } from '@/lib/api/users';
 import useUserStore from '@/store/authStore';
 import { User } from '@/types/user';
@@ -36,11 +37,7 @@ export default function MyPage() {
 
   // 로딩 중
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>로딩중...</p>
-      </div>
-    );
+    return <Spinner />;
   }
 
   // user 없으면 null (로그인 페이지로 이동)
@@ -53,11 +50,15 @@ export default function MyPage() {
         {/* 프로필 */}
         <section className="px-4 py-4 flex items-center gap-4">
           <label className="relative cursor-pointer">
-            <img
-              src={user?.image || '/icons/chat-profile.svg'}
-              alt="프로필"
-              className="w-16 h-16 rounded-full object-cover"
-            />
+            <div className="relative w-16 h-16">
+              <Image
+                src={user?.image || '/icons/chat-profile.svg'}
+                alt="프로필"
+                width={64}
+                height={64}
+                className="rounded-full object-cover"
+              />
+            </div>
           </label>
 
           <div className="flex-1">
@@ -121,9 +122,11 @@ export default function MyPage() {
               {/* 이미지 */}
               <div className="mr-2 w-36 h-36 rounded-lg shrink-0 flex items-center justify-center bg-br-input2-disabled-bg">
                 {user.extra?.pet?.image?.[0] ? (
-                  <img
+                  <Image
                     src={user.extra.pet.image}
                     alt="반려동물 프로필 이미지"
+                    width={144}
+                    height={144}
                     className="w-full h-full rounded-lg object-cover"
                   />
                 ) : (

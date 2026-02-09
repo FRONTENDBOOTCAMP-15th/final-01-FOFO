@@ -156,7 +156,7 @@ export default function ChatRoom({ id }: { id: string }) {
             alt={product?.name || '상품 이미지'}
             width={56}
             height={56}
-            className="rounded-[5px] object-cover mr-2.5 w-[56px] h-[56px]"
+            className="rounded-[5px] object-cover mr-2.5 w-14 h-14"
           />
 
           <div className="flex flex-col justify-center flex-1 min-w-0">

@@ -10,7 +10,7 @@ export async function mypageOrderProductList(): Promise<
   ApiListResponse<PurchaseList>
 > {
   try {
-    const { accessToken, user } = useUserStore.getState();
+    const { accessToken } = useUserStore.getState();
 
     const res = await fetch(`${API_URL}/orders`, {
       headers: {
