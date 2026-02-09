@@ -1,47 +1,79 @@
 //로그인 정보
 
 import { create, type StateCreator } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist, type PersistStorage } from 'zustand/middleware';
 import { type User } from '../types/user';
 
 // 로그인한 사용자 정보를 관리하는 스토어의 상태 인터페이스
 interface UserStoreState {
   user: User | null;
   accessToken: string | null;
+  isAutoLogin: boolean; // 자동 로그인 여부
   setUser: (user: User | null) => void;
   setToken: (token: string) => void;
+  setAutoLogin: (isAuto: boolean) => void;
   resetUser: () => void;
 }
 
-// 로그인한 사용자 정보를 관리하는 스토어 생성
-// StateCreator: Zustand의 유틸리티 타입으로, set 함수의 타입을 자동으로 추론해줌
-// 복잡한 타입 정의 없이도 set 함수가 올바른 타입으로 인식됨
+// 동적 storage: isAutoLogin 값에 따라 localStorage 또는 sessionStorage 사용
+const dynamicStorage: PersistStorage<UserStoreState> = {
+  getItem: (name: string) => {
+    // localStorage에 값이 있으면 localStorage 사용 (자동 로그인)
+    const localValue = localStorage.getItem(name);
+    if (localValue) {
+      return JSON.parse(localValue);
+    }
+
+    // 없으면 sessionStorage 확인
+    const sessionValue = sessionStorage.getItem(name);
+    if (sessionValue) {
+      return JSON.parse(sessionValue);
+    }
+
+    return null;
+  },
+  setItem: (name: string, value) => {
+    const stringValue = JSON.stringify(value);
+
+    // isAutoLogin이 true면 localStorage에 저장
+    if (value.state?.isAutoLogin) {
+      localStorage.setItem(name, stringValue);
+      sessionStorage.removeItem(name);
+    } else {
+      // false면 sessionStorage에 저장
+      sessionStorage.setItem(name, stringValue);
+      localStorage.removeItem(name);
+    }
+  },
+  removeItem: (name: string) => {
+    localStorage.removeItem(name);
+    sessionStorage.removeItem(name);
+  },
+};
+
 const UserStore: StateCreator<UserStoreState> = set => ({
   user: null,
   accessToken: null,
+  isAutoLogin: false,
 
   setUser: user => set({ user }),
 
-  setToken: token =>
-    set({
-      accessToken: token,
-    }),
+  setToken: token => set({ accessToken: token }),
+
+  setAutoLogin: isAuto => set({ isAutoLogin: isAuto }),
 
   resetUser: () =>
     set({
       user: null,
       accessToken: null,
+      isAutoLogin: false,
     }),
 });
 
-// 스토리지를 사용하지 않을 경우
-// const useUserStore = create<UserStoreState>(UserStore);
-
-// 스토리지를 사용할 경우 (sessionStorage에 저장)
 const useUserStore = create<UserStoreState>()(
   persist(UserStore, {
-    name: 'userStore',
-    storage: createJSONStorage(() => sessionStorage), // 기본은 localStorage
+    name: 'userStore', // localStorage와 sessionStorage 모두 'userStore'로 저장
+    storage: dynamicStorage,
   })
 );
 

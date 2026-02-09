@@ -1,55 +1,95 @@
-//로그인 페이지 -------------------------현재 작업 중인 page.tsx 파일입니다.
+//로그인 페이지
 
 'use client';
 
 /* 컴포넌트 및 훅 관리 */
 import Header from '@/components/common/Header';
 import Image from 'next/image';
+import useAuthStore from '@/store/authStore';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+/* 아이콘 */
 import DeleteIcon from '@/public/icons/delete-text.svg';
-/* TODO 아이콘 이름 변경 visile > visible */
 import hiddenIcon from '@/public/icons/hidden.svg';
 import visibleIcon from '@/public/icons/visile.svg';
-/* TODO 아이콘 이름 변경 Frame > check */
 import CheckIcon from '@/public/icons/Frame.svg';
-import { useActionState, useEffect, useState } from 'react';
-import { login } from '@/lib/api/login';
-import useUserStore from '@/store/authStore';
-import { useRouter } from 'next/navigation';
-import { Users } from '@/types/user';
 
 export default function LoginPage() {
   /* ========== 상태 ========== */
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  const [state, formAction, isPending] = useActionState(login, null);
-  const { setUser, setToken } = useUserStore();
+  const { setUser, setToken, setAutoLogin, user, accessToken } = useAuthStore();
   const router = useRouter();
 
+  // 자동 로그인 처리
   useEffect(() => {
-    if (!state) return;
-
-    if (state.ok === 1) {
-      setToken(state.item.token.accessToken);
-      setUser(state.item as Users);
-      router.push('/products');
+    if (accessToken && user) {
+      router.replace('/products');
+    } else {
+      setCheckingAuth(false);
     }
+  }, [accessToken, user, router]);
 
-    if (state.ok === 0) {
-      alert(state.message);
+  // 로그인 성공 시 처리
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isLoading) return;
+
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/login`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID || '',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.ok === 1) {
+        const accessToken = data.item.token.accessToken;
+        const userData = data.item; // User 전체 객체
+
+        // 자동 로그인 설정을 먼저 적용
+        setAutoLogin(isChecked);
+
+        // 그 다음 토큰과 사용자 정보 저장 (storage가 자동으로 결정됨)
+        setToken(accessToken);
+        setUser(userData);
+
+        router.push('/products');
+      } else {
+        alert(data.message);
+      }
+    } catch {
+      alert('네트워크 오류');
+    } finally {
+      setIsLoading(false);
     }
-  }, [state, setToken, router]);
+  };
 
-  /* ========== 핸들러 ========== */
-  const handleClearEmail = () => {
-    setEmail('');
-  };
-  const handleClearPassword = () => {
-    setPassword('');
-  };
-  const togglePassword = () => setShowPassword(!showPassword);
-  const isValid = email.includes('@') && password.length >= 1;
+  // 입력 유효성 검사
+  const isValid = email.includes('@') && password.length >= 8;
+
+  // 자동 로그인 확인 중일 때 로딩 처리
+  if (checkingAuth) {
+    return null;
+  }
 
   /* ========== 랜더 ========== */
   return (
@@ -76,7 +116,7 @@ export default function LoginPage() {
           </div>
 
           {/* 로그인 폼 섹션 */}
-          <form action={formAction} className="flex flex-col gap-2 mt-25">
+          <form onSubmit={handleLogin} className="flex flex-col gap-2 mt-25">
             {/* 로그인 - 이메일 입력(인풋) */}
             <div className="relative">
               <input
@@ -89,7 +129,7 @@ export default function LoginPage() {
               />
               {email.length > 0 && (
                 <div
-                  onClick={handleClearEmail}
+                  onClick={() => setEmail('')}
                   className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer "
                 >
                   <Image src={DeleteIcon} alt="삭제 아이콘" />
@@ -101,20 +141,18 @@ export default function LoginPage() {
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
-                name="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="비밀번호를 입력하세요"
                 className="w-full h-12 px-4 border border-[#E5E5EA] rounded-lg text-[15px] text-[#0F1218] placeholder-[#8A8F99] focus:outline-none focus:border-[#60CFFF]"
               />
-              {/* TODO 입력했을 경우, 눈 깜빡일 떄 보더 포커스 컬러로 유지 */}
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center gap-2 cursor-pointer">
                 {password.length > 0 && (
-                  <div onClick={handleClearPassword}>
+                  <div onClick={() => setPassword('')}>
                     <Image src={DeleteIcon} alt="삭제 아이콘" />
                   </div>
                 )}
-                <div onClick={togglePassword}>
+                <div onClick={() => setShowPassword(p => !p)}>
                   <Image
                     src={showPassword ? visibleIcon : hiddenIcon}
                     alt={
@@ -133,6 +171,9 @@ export default function LoginPage() {
                 <input
                   type="checkbox"
                   id="autoLogin"
+                  name="autoLogin"
+                  checked={isChecked}
+                  onChange={e => setIsChecked(e.target.checked)}
                   className="peer absolute w-full h-full opacity-0 z-10 cursor-pointer"
                 />
                 <div className="w-full h-full bg-[#E5E5EA]"></div>
@@ -149,19 +190,17 @@ export default function LoginPage() {
             </div>
 
             {/* 로그인 - 로그인(버튼) */}
-            {/* TODO: 로그인 href 제대로 넘어가는지 확인 */}
             <button
               type="submit"
-              disabled={!isValid || isPending} // 버튼 비활성화 조건
+              disabled={!isValid || isLoading}
               className={`mt-7.5 w-full h-14 rounded-lg transition-colors 
-                  ${isValid // 로그인 중(isPending)이라도 입력만 올바르다면 파란색 유지!
-                  ? 'text-white bg-[#60CFFF] cursor-pointer'
-                  : 'text-[#8A8F99] bg-[#E5E5EA] cursor-not-allowed'
-                } 
-                  ${isPending ? 'opacity-70' : ''}`}
+                  ${
+                    isValid
+                      ? 'text-white bg-[#60CFFF] cursor-pointer'
+                      : 'text-[#8A8F99] bg-[#E5E5EA] cursor-not-allowed'
+                  } 
+                  ${isLoading ? 'opacity-70' : ''}`}
             >
-              {/* TODO 로그인 <- 나중에 삭제*/}
-              {/*  {isPending ? 'FOFO 홈으로 이동 중' : '로그인'} */}
               로그인
             </button>
           </form>

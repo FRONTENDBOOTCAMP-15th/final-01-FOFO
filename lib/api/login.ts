@@ -1,9 +1,7 @@
+// 로그인 시 API 호출 함수 (로그인 전용 서버 액션)
+
 'use server';
 
-/* import { ApiResponse } from '@/types/common';
-import { LoginResponse } from '@/types/user';
- */
-// 시연을 위해 실제 API 호출 부분은 주석 처리 -- 추후 해제
 import { ApiResponse } from '@/types/common';
 import { LoginRequest, LoginResponse } from '@/types/user';
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -11,14 +9,15 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID || '';
 
 type LoginActionState = ApiResponse<LoginResponse> | null;
 
-// 실제 API 호출하는 원래 함수 -- 추후 해제
+// 실제 API 호출하는 원래 함수
 export async function login(
-  state: LoginActionState,
+  // state: LoginActionState,
   formData: FormData
 ): Promise<LoginActionState> {
   // FormData에서 값 추출
   const email = formData.get('email');
   const password = formData.get('password');
+  const autoLogin = formData.get('autoLogin') === 'on'; // 자동 로그인, 체크박스 값 처리
 
   // 타입가드, 값 검증(문자열 확인)
   if (typeof email !== 'string' || typeof password !== 'string') {
@@ -29,9 +28,11 @@ export async function login(
   }
 
   // LoginRequest 타입에 맞는 객체 생성
-  const body: LoginRequest = {
+  // const body: LoginRequest = { // 자동 로그인 하기 전 코드
+  const body: LoginRequest & { autoLogin: boolean } = {
     email,
     password,
+    autoLogin, // 자동 로그인, 체크박스 값 추가
   };
 
   try {
@@ -55,25 +56,3 @@ export async function login(
     };
   }
 }
-
-// 가짜 데이터 반환하는 더미 함수
-/* export async function login(
-  _state: LoginActionState,
-  formData: FormData
-): Promise<LoginActionState> {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  const dummyItem = {
-    email: email || 'fofo@gmail.com',
-    password: password || '11111111',
-  };
-
-  const dummyData: ApiResponse<LoginResponse> = {
-    ok: 1,
-    item: dummyItem as unknown as LoginResponse,
-  };
-
-  return dummyData;
-}
- */

@@ -5,6 +5,7 @@
 /* 컴포넌트 및 훅 관리 */
 import Header from '@/components/common/Header'; //헤더 컴포넌트
 import Image from 'next/image'; //이미지 컴포넌트
+import useAuthStore from '@/store/authStore';
 import { useEffect, useState } from 'react'; // 상태 관리 훅
 import {
   CATEGORY_MAP,
@@ -16,7 +17,6 @@ import { useRouter } from 'next/navigation'; // 라우터 훅(페이지 이동)
 import { registProduct, uploadFile } from '@/lib/api/new'; // 상품 등록 API 함수
 import { SellerProduct } from '@/types/product'; // 상품 타입
 import { embedSingleProduct } from '@/actions/ai-search/generate-embeddings';
-import useUserStore from '@/store/authStore';
 
 export default function NewPage() {
   /* ========== 상태 ========== */
@@ -34,7 +34,7 @@ export default function NewPage() {
   /* ========== 핸들러 ========== */
   /* 로그인 없으면 글 작성 못 함 */
   const router = useRouter(); // 라우터 인스턴스(페이지 이동)
-  const accessToken = useUserStore(state => state.accessToken); // 인증 토큰 가져오기
+  const accessToken = useAuthStore(state => state.accessToken); // 인증 토큰 가져오기
 
   useEffect(() => {
     if (!accessToken) {
@@ -89,13 +89,6 @@ export default function NewPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
-
-    // 상품 등록(버튼 클릭 전) ---> 로그인 여부 확인
-    if (!accessToken) {
-      alert('로그인이 필요합니다.');
-      router.push('/auth/login');
-      return;
-    }
 
     // TODO alert말고 다른 방법 생각
     // 상품 등록(버튼 클릭 전) ---> 유효성 검사(빈 칸 체크)
