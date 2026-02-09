@@ -12,6 +12,7 @@ export interface Product {
   price: number;
   name: string;
   mainImages: ProductImages[];
+  image?: string;
   show?: boolean;
   active?: boolean;
   createdAt: string;
@@ -171,5 +172,11 @@ export type BookmarkDeleteRes =
 export interface PurchaseList {
   _id: number;
   user_id: number;
+  state: string;
   products: Product[];
+  cost?: {
+    products: number;
+    shippingFees: number;
+    total: number;
+  };
 }

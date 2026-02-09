@@ -105,7 +105,7 @@ export default function ProductDetailFooter({
         </button>
         {/* 채팅하기 */}
         <Link
-          href="/chat"
+          href={`/chat/${productId}`}
           onClick={chatClick}
           className="flex-1 py-4 font-light bg-br-button-active-bg text-br-button-active-text rounded-xl text-center"
         >
