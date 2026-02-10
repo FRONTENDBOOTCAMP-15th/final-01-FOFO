@@ -8,8 +8,7 @@ import ProductPageSearchBar from '@/components/product/ProductPageSearchBar';
 import ProductPageWriteButton from '@/components/product/ProductPageWriteButton';
 
 export default async function ProductPage() {
-  // 스플래시 화면이 나오도록 2.5초 지연 걸어둠
-  await new Promise(resolve => setTimeout(resolve, 1000 * 1));
+  await new Promise(resolve => setTimeout(resolve, 1000 * 0.5));
   const res = await getCustomProducts();
 
   return (

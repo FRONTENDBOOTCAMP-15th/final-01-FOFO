@@ -6,10 +6,10 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   metadataBase: new URL('https://fofo-forfour.vercel.app'),
 
-  title: '포포(FoFo)-for four',
+  title: 'FOFO 포포',
   description: '네 발 달린 가족을 위해, AI가 골라주는 반려동물 중고 용품',
   openGraph: {
-    title: '포포(FoFo)-for four',
+    title: 'FOFO 포포',
     description: '반려동물을 위한 스마트한 선택',
     url: 'https://fofo-forfour.vercel.app',
     siteName: '포포(FoFo)',
