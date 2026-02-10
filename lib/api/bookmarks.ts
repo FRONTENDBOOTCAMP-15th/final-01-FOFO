@@ -21,7 +21,6 @@ export async function addBookmark(
         message: '로그인이 필요합니다.',
       };
     }
-    const userId = user._id;
 
     const res = await fetch(`${API_URL}/bookmarks/product`, {
       method: 'POST',
