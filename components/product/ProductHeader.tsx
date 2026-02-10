@@ -43,7 +43,7 @@ export default function ProductHeader() {
         ) : (
           <Link
             href="/auth"
-            className="px-2 py-1 bg-br-primary-500 text-white text-xs rounded-[10px]"
+            className="pr-2 text-br-primary-500 text-xs font-medium"
           >
             로그인
           </Link>
