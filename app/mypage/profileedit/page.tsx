@@ -21,7 +21,9 @@ export default function ProfileEditPage() {
   /* 입력 상태 관리 */
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [nickname, setNickname] = useState('');
+  // const [nickname, setNickname] = useState('');
+  const [nickname, setNickname] = useState(user?.name || '');
+  const [nicknameMessage, setNicknameMessage] = useState(''); // 메시지 저장
   const [description, setDescription] = useState('');
 
   /* 유효성 및 로딩 상태 */
@@ -72,13 +74,17 @@ export default function ProfileEditPage() {
   const handleCheckDuplicate = async () => {
     if (!nickname) return alert('닉네임을 입력해주세요.');
     if (nickname === user?.name) {
-      alert('현재 사용 중인 닉네임입니다.');
+      // setNicknameMessage('현재 사용 중인 닉네임입니다.');
+      // setIsNicknameChecked(true);
+      setNicknameMessage('현재 사용 중인 닉네임입니다.');
+      setIsNicknameError(false); // 에러 아님 표시
       setIsNicknameChecked(true);
       return;
     }
 
     // TODO: 팀의 중복검사 API가 있다면 여기에 연동
-    alert('사용 가능한 닉네임입니다.');
+    setNicknameMessage('사용 가능한 닉네임입니다.'); // 메시지 저장
+    setIsNicknameError(false); // 에러 아님 (회색으로 표시됨)
     setIsNicknameChecked(true);
   };
 
@@ -190,9 +196,20 @@ export default function ProfileEditPage() {
               <BaseInput
                 label="닉네임"
                 value={nickname}
-                onChange={handleNicknameChange}
+                // onChange={handleNicknameChange}
+                onChange={val => {
+                  setNickname(val);
+                  setIsNicknameChecked(false);
+                  setIsNicknameError(false);
+                }}
+                // [중요] 에러 상태 연결
                 isError={isNicknameError}
-                errorMsg="이미 사용 중인 닉네임입니다"
+                // [중요] 에러일 때 보여줄 메시지
+                errorMsg={nicknameMessage}
+                // [중요] 에러가 아닐 때(성공 시) 보여줄 메시지
+                hint={!isNicknameError ? nicknameMessage : ''}
+                // isError={isNicknameError}
+                // errorMsg="이미 사용 중인 닉네임입니다"
                 suffix={
                   <button
                     type="button"
