@@ -24,7 +24,7 @@ export default async function ProductPage() {
       {/* 상품 목록 */}
       {res.ok === 1 && <ProductPageList products={res.item} />}
 
-      {/* 글쓰기 버튼 (나중에 토큰 유무 조건 걸어둘 예정 ) */}
+      {/* 글쓰기 버튼 */}
       <ProductPageWriteButton />
       <UnderBar />
     </div>
