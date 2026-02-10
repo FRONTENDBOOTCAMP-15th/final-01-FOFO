@@ -52,7 +52,9 @@ export interface ProductSearchListRes {
 export type ProductList = Pick<
   Product,
   '_id' | 'price' | 'name' | 'mainImages' | 'bookmarks' | 'views'
->;
+> & {
+  extra?: Pick<Product['extra'], 'pet' | 'mainCategory' | 'subCategory'>;
+};
 
 // 상품 목록 페이지(embedding 제외한 타입)
 export type ProductWithoutEmbeddings = Omit<Product, 'extra'> & {
