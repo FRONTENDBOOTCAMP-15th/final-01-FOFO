@@ -58,11 +58,14 @@ export async function getSellerProductList(
   sellerId: number
 ): Promise<ApiListResponse<SellerProductList>> {
   try {
-    const res = await fetch(`${API_URL}/products?seller_id=${sellerId}`, {
-      headers: {
-        'Client-Id': CLIENT_ID,
-      },
-    });
+    const res = await fetch(
+      `${API_URL}/products?seller_id=${sellerId}&showSoldOut=true`,
+      {
+        headers: {
+          'Client-Id': CLIENT_ID,
+        },
+      }
+    );
 
     return res.json();
   } catch (error) {
@@ -80,7 +83,7 @@ export async function mypageSellerProductList(): Promise<
   ApiListResponse<SellerProductList>
 > {
   try {
-    const { accessToken, user } = useUserStore.getState();
+    const { accessToken } = useUserStore.getState();
 
     const res = await fetch(`${API_URL}/seller/products`, {
       headers: {

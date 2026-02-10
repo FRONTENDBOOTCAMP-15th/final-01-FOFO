@@ -81,7 +81,7 @@ export async function getBookmarks(): Promise<BookmarkListRes> {
       headers: {
         'Client-Id': CLIENT_ID,
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       },
     });
     return res.json();
