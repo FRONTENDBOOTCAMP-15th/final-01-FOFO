@@ -31,7 +31,9 @@ export default function ProductInfoTab({
       <p className="mb-2 text-2xl font-bold text-br-primary-500">
         {detail.price.toLocaleString()}원
       </p>
-      <p className="font-light break-all mb-2">{detail.content}</p>
+      <p className="font-light break-all mb-2 whitespace-pre-wrap">
+        {detail.content}
+      </p>
 
       {/* 조회수/찜 수*/}
       <div className="flex items-center gap-3 text-sm text-br-input-disabled-text mb-6 justify-end">
