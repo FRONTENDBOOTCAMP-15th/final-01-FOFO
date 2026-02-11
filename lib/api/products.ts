@@ -107,7 +107,7 @@ export async function mypageSellerProductList(): Promise<
 export async function getCustomProducts(): Promise<ApiListResponse<Product>> {
   try {
     const res = await fetch(
-      `${API_URL}/products?excludeFields=extra.embeddings&custom={"buyQuantity":0}`,
+      `${API_URL}/products?excludeFields=extra.embeddings&limit=300`,
       {
         headers: {
           'Client-Id': CLIENT_ID,
