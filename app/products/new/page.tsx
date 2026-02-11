@@ -1,4 +1,4 @@
-//상품 등록
+// 상품 등록 페이지
 
 'use client';
 
@@ -115,23 +115,20 @@ export default function NewPage() {
 
     try {
       setIsSubmitting(true);
-      // 상품 등록(버튼 클릭 후) ---> 사진 업로드
       const uploadResults = await Promise.all(
         photos.map(file => uploadFile(file))
       );
 
-      // 상품 등록(버튼 클릭 후) ---> 업로드 된 파일 정보 추출
       const mainImages = uploadResults.map(res => ({
         path: res.item[0].path,
         name: res.item[0].name,
       }));
 
-      // 상품 등록(버튼 클릭 후) ---> 전송할 데이터 구성
       const productData: SellerProduct = {
         name: title,
         content: description,
         price: Number(price.replace(/,/g, '')),
-        quantity: 2,
+        quantity: 1,
         mainImages: mainImages,
         extra: {
           pet: petType,
@@ -143,10 +140,8 @@ export default function NewPage() {
         },
       };
 
-      // 상품 등록 ---> API 호출
       const result = await registProduct(productData, accessToken);
 
-      // 상품 등록(버튼 클릭 후) ---> 결과 처리
       if (result.ok) {
         const productId = result.item._id;
         embedSingleProduct(productId).catch(err => {
@@ -160,17 +155,25 @@ export default function NewPage() {
     } catch (error) {
       console.error('상품 등록 통신 에러:', error);
       alert('네트워크 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
       <Header title="상품 등록" />
-      <div className="min-h-screen flex justify-center">
+      <main className="min-h-screen flex justify-center">
         <div className="relative w-full px-4 pb-40 bg-white">
-          {/* 사진 등록 - 기본 */}
-          <div className="flex flex-col mt-7.5">
-            <p className="ml-1 text-[13px] font-medium text-[#0F1218]">
+          {/* 사진 등록 영역 */}
+          <section
+            className="flex flex-col mt-7.5"
+            aria-labelledby="photo-upload-label"
+          >
+            <p
+              id="photo-upload-label"
+              className="ml-1 text-[13px] font-medium text-[#0F1218]"
+            >
               사진 등록
             </p>
             <div className="mt-1.5 pt-1.5 flex gap-3 overflow-x-auto pb-1.5">
@@ -187,9 +190,11 @@ export default function NewPage() {
                     alert('사진은 최대 10장까지만 등록 가능합니다.');
                   }
                 }}
+                aria-label={`사진 추가 (${photos.length}/10)`}
               >
                 <span
                   className={`text-xl ${photos.length >= 10 ? 'text-[#C7C7CC]' : 'text-[#8A8F99]'}`}
+                  aria-hidden="true"
                 >
                   +
                 </span>
@@ -209,14 +214,14 @@ export default function NewPage() {
                 />
               </label>
 
-              {/* 사진 등록 - 업로드 */}
+              {/* 업로드된 사진 목록 */}
               {photos.map((photo, index) => (
                 <div key={index} className="relative w-21 h-21 shrink-0">
                   <div className="w-full h-full overflow-hidden rounded-lg bg-[#E5E5EA]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={URL.createObjectURL(photo)}
-                      alt={`사진 ${index + 1}`}
+                      alt={`등록된 사진 ${index + 1}`}
                       className="w-full h-full object-cover border border-[#e5e5ea] rounded-lg "
                     />
                   </div>
@@ -224,19 +229,23 @@ export default function NewPage() {
                     type="button"
                     onClick={() => handleDeletePhoto(index)}
                     className="absolute -top-2 -right-2 z-10 cursor-pointer"
+                    aria-label={`${index + 1}번 사진 삭제`}
                   >
                     <Image
                       src="/icons/delete-photo.svg"
-                      alt="삭제"
+                      alt="" // 접근성: aria-label로 설명 대체
                       width={18}
                       height={18}
                       className="w-6 h-6"
+                      aria-hidden="true"
                     />
                   </button>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
+
+          {/* 상품 정보 입력 폼 */}
           <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
             {/* 반려동물 선택 */}
             <ToggleButton
@@ -250,8 +259,11 @@ export default function NewPage() {
             />
 
             {/* 메인 카테고리 */}
-            <div>
-              <p className="ml-1 text-[13px] font-medium text-[#0F1218]">
+            <div role="group" aria-labelledby="main-category-label">
+              <p
+                id="main-category-label"
+                className="ml-1 text-[13px] font-medium text-[#0F1218]"
+              >
                 카테고리
               </p>
               <div className="flex gap-3 mt-1.5">
@@ -261,6 +273,7 @@ export default function NewPage() {
                       key={item}
                       type="button"
                       onClick={() => handleMainChange(item)}
+                      aria-pressed={mainCategory === item}
                       className={`flex-1 px-4.5 py-2.25 rounded-lg text-[13px] ${
                         mainCategory === item
                           ? 'text-[#60CFFF] font-semibold border border-[#60cfff] bg-[#E8F8FF]'
@@ -275,7 +288,11 @@ export default function NewPage() {
             </div>
 
             {/* 하위 카테고리 */}
-            <div className="grid justify-between grid-cols-3 gap-4">
+            <div
+              className="grid justify-between grid-cols-3 gap-4"
+              role="radiogroup"
+              aria-label="하위 카테고리 선택"
+            >
               {Object.entries(CATEGORY_MAP[petType][mainCategory]).map(
                 ([key, label], idx) => (
                   <label
@@ -292,7 +309,10 @@ export default function NewPage() {
                       onChange={e => setSubCategory(e.target.value)}
                       className="peer hidden"
                     />
-                    <div className="w-5.5 h-5.5 rounded-full border border-[#E5E5EA] flex items-center justify-center transition-colors bg-white peer-checked:border-[#60CFFF] peer-checked:[&>div]:scale-100 peer-checked:[&>div]:opacity-100">
+                    <div
+                      className="w-5.5 h-5.5 rounded-full border border-[#E5E5EA] flex items-center justify-center transition-colors bg-white peer-checked:border-[#60CFFF] peer-checked:[&>div]:scale-100 peer-checked:[&>div]:opacity-100"
+                      aria-hidden="true"
+                    >
                       <div className="w-3 h-3 rounded-full bg-[#60CFFF] transition-all duration-200 transform scale-0 opacity-0" />
                     </div>
                     <span className="text-[13px] text-[#8A8F99] peer-checked:text-[#0F1218]">
@@ -305,13 +325,13 @@ export default function NewPage() {
 
             {/* 제목 */}
             <BaseInput
+              id="title"
               label="제목"
               value={title}
               onChange={val => {
                 setTitle(val);
-                if (errors.title) {
+                if (errors.title)
                   setErrors(prev => ({ ...prev, title: undefined }));
-                }
               }}
               placeholder="제목을 입력하세요."
               className="mt-2.5"
@@ -321,14 +341,14 @@ export default function NewPage() {
 
             {/* 설명 */}
             <BaseInput
+              id="description"
               label="설명"
               type="textarea"
               value={description}
               onChange={val => {
                 setDescription(val);
-                if (errors.description) {
+                if (errors.description)
                   setErrors(prev => ({ ...prev, description: undefined }));
-                }
               }}
               placeholder={`포포에 올릴 게시글 내용을 작성해주세요.\n(안전한 거래를 위해 유통기한을 입력해주세요)`}
               isError={isSubmitted && !!errors.description}
@@ -337,13 +357,13 @@ export default function NewPage() {
 
             {/* 가격 */}
             <BaseInput
+              id="price"
               label="가격"
               value={price}
               onChange={val => {
                 handlePriceChange(val);
-                if (errors.price) {
+                if (errors.price)
                   setErrors(prev => ({ ...prev, price: undefined }));
-                }
               }}
               placeholder="₩ 가격을 입력해주세요"
               suffix={<span className="mr-4 text-[#0f1218]">원</span>}
@@ -375,17 +395,17 @@ export default function NewPage() {
 
             {/* 장소 입력 */}
             <BaseInput
+              id="tradeLocation"
               label="거래 장소"
               value={tradeLocation}
               onChange={val => {
                 setTradeLocation(val);
-                if (errors.title) {
-                  setErrors(prev => ({ ...prev, title: undefined }));
-                }
+                if (errors.tradeLocation)
+                  setErrors(prev => ({ ...prev, tradeLocation: undefined }));
               }}
               placeholder="종로 1번 출구"
-              isError={isSubmitted && !!errors.title}
-              errorMsg={errors.title}
+              isError={isSubmitted && !!errors.tradeLocation}
+              errorMsg={errors.tradeLocation}
             />
 
             {/* 버튼 영역 */}
@@ -395,7 +415,7 @@ export default function NewPage() {
             />
           </form>
         </div>
-      </div>
+      </main>
     </>
   );
 }

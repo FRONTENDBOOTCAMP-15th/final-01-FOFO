@@ -5,6 +5,7 @@
 import { useState } from 'react';
 
 interface BaseInputProps {
+  id?: string;
   label: string;
   value: string;
   onChange: (val: string) => void;
@@ -20,6 +21,7 @@ interface BaseInputProps {
 }
 
 export default function BaseInput({
+  id,
   label,
   value,
   onChange,
@@ -47,14 +49,18 @@ export default function BaseInput({
 
   return (
     <div className={`w-full ${className ?? ''}`}>
-      <p className="ml-1 text-[13px] font-medium text-[#0F1218]">
+      <label
+        htmlFor={id}
+        className="block ml-1 text-[13px] font-medium text-[#0F1218] cursor-pointer"
+      >
         {label}
         {required && <span className="ml-0.5 text-[#60CFFF]">*</span>}
-      </p>
+      </label>
 
       <div className="relative mt-1.5">
         {type === 'text' ? (
           <input
+            id={id}
             type="text"
             value={value}
             onChange={e => onChange(e.target.value)}
@@ -70,6 +76,7 @@ export default function BaseInput({
           />
         ) : (
           <textarea
+            id={id}
             value={value}
             onChange={e => onChange(e.target.value)}
             disabled={disabled}
